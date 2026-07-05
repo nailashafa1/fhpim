@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Cek Harga & Promo · Barcode Code 128</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- JsBarcode (Code 128) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <!-- html5-qrcode untuk scan barcode -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e9f2f9 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .card {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* ===== HEADER ===== */
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .brand h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0b2b3f;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .brand h1 i {
+            color: #2a7faa;
+            font-size: 1.4rem;
+            background: rgba(42, 127, 170, 0.12);
+            padding: 0.3rem 0.5rem;
+            border-radius: 1.2rem;
+        }
+
+        .brand .tagline {
+            background: #d4e5f0;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #1a4b63;
+            white-space: nowrap;
+        }
+
+        /* ===== MENU GRID ===== */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 1.2rem 1rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-height: 80px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .menu-item:active {
+            transform: scale(0.97);
+        }
+
+        .menu-item .left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            min-width: 0;
+        }
+
+        .menu-item .icon-circle {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: #e6f0f8;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #1e6a8f;
+            flex-shrink: 0;
+        }
+
+        .menu-item .info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b2b3f;
+            line-height: 1.2;
+        }
+
+        .menu-item .info p {
+            font-size: 0.75rem;
+            color: #3f627b;
+            margin-top: 0.1rem;
+            line-height: 1.2;
+        }
+
+        .menu-item .badge {
+            background: #eef6fb;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.65rem;
+            color: #1c5a7a;
+            border: 1px solid #d2e4f0;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* ===== BARCODE SECTION ===== */
+        .barcode-section {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.06);
+            border: 1px solid rgba(255,255,255,0.7);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .barcode-left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .barcode-left .icon-big {
+            background: linear-gradient(145deg, #1d5d7a, #134256);
+            color: white;
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(20, 60, 80, 0.25);
+            flex-shrink: 0;
+        }
+
+        .barcode-text h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0b2b3f;
+            line-height: 1.2;
+        }
+
+        .barcode-text p {
+            font-size: 0.75rem;
+            color: #3f627b;
+            margin-top: 0.1rem;
+        }
+
+        .barcode-visual {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 200px;
+            justify-content: flex-start;
+        }
+
+        .barcode-box {
+            background: #f2f8fe;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1.5rem;
+            border: 1px solid #d8e6f2;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        #barcode-svg {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            height: 40px;
+            min-width: 120px;
+        }
+
+        .barcode-box .code-number {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #1a4b63;
+            background: white;
+            padding: 0.15rem 0.6rem;
+            border-radius: 40px;
+            border: 1px dashed #9bbfd6;
+            white-space: nowrap;
+        }
+
+        .barcode-cta {
+            background: #dcebf5;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #134256;
+            border: 1px solid rgba(255,255,255,0.5);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .barcode-cta:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== LIST SCAN ===== */
+        .scan-list-section {
+            margin-top: 1.5rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.06);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .scan-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .scan-list-header h3 {
+            font-size: 1rem;
+            color: #0b2b3f;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .scan-list-header h3 span {
+            background: #1d5d7a;
+            color: white;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+
+        .scan-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .scan-actions button {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .scan-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-csv {
+            background: #2a7faa;
+            color: white;
+        }
+
+        .btn-wa {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-email {
+            background: #EA4335;
+            color: white;
+        }
+
+        .btn-clear {
+            background: #eef6fb;
+            color: #1d5d7a;
+        }
+
+        .scan-list-table {
+            overflow-x: auto;
+        }
+
+        .scan-list-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .scan-list-table th {
+            text-align: left;
+            padding: 0.6rem 0.4rem;
+            border-bottom: 2px solid #d8e6f2;
+            color: #1a4b63;
+            font-weight: 700;
+        }
+
+        .scan-list-table td {
+            padding: 0.5rem 0.4rem;
+            border-bottom: 1px solid #eef6fb;
+            color: #0b2b3f;
+            font-family: monospace;
+        }
+
+        .scan-list-table .delete-btn {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: none;
+            border: none;
+            padding: 0.2rem 0.4rem;
+            transition: 0.2s;
+        }
+
+        .scan-list-table .delete-btn:active {
+            transform: scale(0.9);
+        }
+
+        .empty-list {
+            text-align: center;
+            padding: 2rem;
+            color: #8aaec4;
+            font-size: 0.9rem;
+        }
+
+        .empty-list i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* ===== MODAL SCAN ===== */
+        .modal-scan {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-scan.active {
+            display: flex;
+        }
+
+        .modal-scan-content {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            padding: 1.5rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-scan-content .close-btn {
+            position: absolute;
+            top: 0.8rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #0b2b3f;
+            background: #eef6fb;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-weight: 700;
+        }
+
+        .modal-scan-content h3 {
+            font-size: 1.2rem;
+            color: #0b2b3f;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #000;
+            min-height: 300px;
+        }
+
+        .scan-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f2f8fe;
+            border-radius: 1rem;
+            display: none;
+        }
+
+        .scan-result.show {
+            display: block;
+        }
+
+        .scan-result label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #0b2b3f;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .scan-result input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px solid #d8e6f2;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .scan-result .btn-group {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .scan-result .btn-group button {
+            flex: 1;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #1d5d7a;
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-secondary {
+            background: #eef6fb;
+            color: #1d5d7a;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.95);
+        }
+
+        .scan-result .barcode-result {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 0.6rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 0.8rem;
+            border: 2px solid #d8e6f2;
+            word-break: break-all;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-note {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4b718a;
+            border-top: 1px solid rgba(100, 140, 170, 0.15);
+            padding-top: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-note span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-note span i {
+            color: #2a7faa;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding: 0.8rem; }
+            .card { padding: 1.2rem; border-radius: 1.5rem; }
+            .brand h1 { font-size: 1.4rem; }
+            .menu-grid { gap: 0.8rem; }
+            .menu-item { padding: 0.9rem 0.8rem; min-height: 70px; border-radius: 1.2rem; }
+            .menu-item .icon-circle { width: 42px; height: 42px; min-width: 42px; font-size: 1.2rem; }
+            .menu-item .info h3 { font-size: 0.95rem; }
+            .barcode-section { padding: 1rem; border-radius: 1.2rem; flex-direction: column; align-items: stretch; }
+            .barcode-left { min-width: unset; }
+            .barcode-visual { min-width: unset; justify-content: flex-start; }
+            .barcode-left .icon-big { width: 48px; height: 48px; min-width: 48px; font-size: 1.6rem; }
+            .barcode-text h2 { font-size: 1.1rem; }
+            #barcode-svg { height: 36px; min-width: 100px; }
+            .modal-scan-content { max-width: 100%; margin: 0.5rem; }
+            .scan-list-header { flex-direction: column; align-items: stretch; }
+            .scan-actions { justify-content: flex-start; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 0.5rem; }
+            .card { padding: 0.9rem; border-radius: 1.2rem; }
+            .brand { margin-bottom: 1.2rem; gap: 0.5rem; }
+            .brand h1 { font-size: 1.2rem; }
+            .brand h1 i { font-size: 1rem; padding: 0.2rem 0.4rem; }
+            .brand .tagline { font-size: 0.65rem; padding: 0.25rem 0.7rem; }
+            .menu-grid { gap: 0.6rem; margin-bottom: 1.2rem; }
+            .menu-item { padding: 0.7rem 0.6rem; min-height: 60px; border-radius: 1rem; }
+            .menu-item .left { gap: 0.5rem; }
+            .menu-item .icon-circle { width: 36px; height: 36px; min-width: 36px; font-size: 1rem; border-radius: 25px; }
+            .menu-item .info h3 { font-size: 0.85rem; }
+            .menu-item .info p { font-size: 0.6rem; }
+            .menu-item .badge { font-size: 0.55rem; padding: 0.2rem 0.6rem; }
+            .barcode-section { padding: 0.8rem; border-radius: 1rem; gap: 0.7rem; }
+            .barcode-left { gap: 0.5rem; }
+            .barcode-left .icon-big { width: 40px; height: 40px; min-width: 40px; font-size: 1.2rem; border-radius: 30px; }
+            .barcode-text h2 { font-size: 0.95rem; }
+            .barcode-text p { font-size: 0.65rem; }
+            .barcode-visual { gap: 0.5rem; }
+            .barcode-box { padding: 0.3rem 0.6rem; border-radius: 1rem; }
+            #barcode-svg { height: 30px; min-width: 80px; }
+            .barcode-box .code-number { font-size: 0.65rem; padding: 0.1rem 0.4rem; letter-spacing: 0.5px; }
+            .barcode-cta { font-size: 0.65rem; padding: 0.3rem 0.7rem; }
+            .footer-note { margin-top: 1.2rem; padding-top: 0.8rem; font-size: 0.6rem; gap: 0.8rem; }
+            .modal-scan-content { padding: 1rem; }
+            .modal-scan-content h3 { font-size: 1rem; }
+            #reader { min-height: 200px; }
+            .scan-list-section { padding: 0.8rem; }
+            .scan-list-table table { font-size: 0.7rem; }
+            .scan-list-table th, .scan-list-table td { padding: 0.3rem 0.2rem; }
+            .scan-actions button { font-size: 0.6rem; padding: 0.3rem 0.6rem; }
+        }
+
+        @media (max-width: 360px) {
+            .brand h1 { font-size: 1rem; }
+            .menu-item .info h3 { font-size: 0.75rem; }
+            .menu-item .icon-circle { width: 32px; height: 32px; min-width: 32px; font-size: 0.85rem; }
+            .barcode-left .icon-big { width: 36px; height: 36px; min-width: 36px; font-size: 1rem; }
+            .barcode-text h2 { font-size: 0.85rem; }
+            #barcode-svg { height: 24px; min-width: 60px; }
+            .barcode-box .code-number { font-size: 0.55rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <!-- HEADER -->
+        <div class="brand">
+            <h1>
+                <i class="fas fa-tag"></i> 
+                FHPIM
+            </h1>
+            <span class="tagline"><i class="fas fa-bolt" style="margin-right: 4px;"></i> update harian</span>
+        </div>
+
+        <!-- GRID MENU: Cek Harga + Cek Promo -->
+        <div class="menu-grid">
+            <div class="menu-item" onclick="alert('🔍 Cek Harga: semua produk real-time')">
+                <div class="left">
+                    <div class="icon-circle">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <div class="info">
+                        <h3>Cek Harga</h3>
+                        <p>Real-time · semua produk</p>
+                    </div>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-arrow-right" style="margin-right: 4px;"></i> lihat
+                </div>
+            </div>
+
+            <!-- Cek Promo dengan link ke promo.html -->
+            <a href="promo.html" class="menu-item" onclick="event.preventDefault(); window.location.href='promo.html';">
+                <div class="left">
+                    <div class="icon-circle">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="info">
+                        <h3>Cek Promo</h3>
+                        <p>Diskon · bundle · voucher</p>
+                    </div>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-arrow-right" style="margin-right: 4px;"></i> lihat
+                </div>
+            </a>
+        </div>
+
+        <!-- BARCODE SECTION -->
+        <div class="barcode-section">
+            <div class="barcode-left">
+                <div class="icon-big">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <div class="barcode-text">
+                    <h2>Barcode</h2>
+                    <p><i class="fas fa-qrcode" style="margin-right: 4px;"></i> scan untuk promo eksklusif</p>
+                </div>
+            </div>
+
+            <div class="barcode-visual">
+                <div class="barcode-box">
+                    <svg id="barcode-svg"></svg>
+                    <div class="code-number">PROMO123</div>
+                </div>
+                <span class="barcode-cta" id="scanBtn">
+                    <i class="fas fa-camera"></i> scan
+                </span>
+            </div>
+        </div>
+
+        <!-- LIST SCAN -->
+        <div class="scan-list-section">
+            <div class="scan-list-header">
+                <h3>
+                    <i class="fas fa-list"></i> Daftar Scan
+                    <span id="totalCount">0</span>
+                </h3>
+                <div class="scan-actions">
+                    <button class="btn-csv" id="exportCsvBtn"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="btn-wa" id="shareWaBtn"><i class="fab fa-whatsapp"></i> WA</button>
+                    <button class="btn-email" id="shareEmailBtn"><i class="fas fa-envelope"></i> Email</button>
+                    <button class="btn-clear" id="clearListBtn"><i class="fas fa-trash"></i> Hapus</button>
+                </div>
+            </div>
+            <div class="scan-list-table">
+                <div id="emptyList" class="empty-list">
+                    <i class="fas fa-camera"></i>
+                    Belum ada data scan<br>
+                    <small>Scan barcode untuk menambahkan</small>
+                </div>
+                <table id="scanTable" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Barcode</th>
+                            <th>Qty</th>
+                            <th style="text-align:center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scanTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-note">
+            <span><i class="fas fa-shield-alt"></i> FHPIM</span>
+            <span><i class="fas fa-shield-alt"></i> Ryan</span>
+            
+        </div>
+    </div>
+
+    <!-- MODAL SCAN BARCODE -->
+    <div class="modal-scan" id="scanModal">
+        <div class="modal-scan-content">
+            <button class="close-btn" id="closeModal">&times;</button>
+            <h3><i class="fas fa-camera"></i> Scan Barcode</h3>
+            <div id="reader"></div>
+            <div class="scan-result" id="scanResult">
+                <label>Hasil Scan:</label>
+                <div class="barcode-result" id="barcodeResult">-</div>
+                <label>Masukkan Qty:</label>
+                <input type="number" id="qtyInput" placeholder="Jumlah..." min="1" value="1">
+                <div class="btn-group">
+                    <button class="btn-primary" id="confirmBtn"><i class="fas fa-check"></i> Konfirmasi</button>
+                    <button class="btn-secondary" id="rescanBtn"><i class="fas fa-redo"></i> Scan Ulang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ===== GENERATE BARCODE CODE 128 =====
+            const barcodeValue = "PROMO123";
+            try {
+                JsBarcode("#barcode-svg", barcodeValue, {
+                    format: "CODE128",
+                    width: 1.5,
+                    height: 40,
+                    displayValue: true,
+                    fontSize: 12,
+                    font: "monospace",
+                    textMargin: 2,
+                    background: "#ffffff",
+                    lineColor: "#0b2b3f",
+                    margin: 4,
+                    fontOptions: "bold"
+                });
+            } catch (e) {
+                console.warn("Barcode render error:", e);
+            }
+
+            // Update label
+            const codeNumberSpan = document.querySelector('.barcode-box .code-number');
+            if (codeNumberSpan) {
+                codeNumberSpan.textContent = barcodeValue;
+            }
+
+            // ===== DATA STORE =====
+            let scanData = [];
+            let idCounter = 0;
+
+            // ===== DOM ELEMENTS =====
+            const scanBtn = document.getElementById('scanBtn');
+            const modal = document.getElementById('scanModal');
+            const closeModal = document.getElementById('closeModal');
+            const scanResult = document.getElementById('scanResult');
+            const barcodeResult = document.getElementById('barcodeResult');
+            const qtyInput = document.getElementById('qtyInput');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const rescanBtn = document.getElementById('rescanBtn');
+            const scanTableBody = document.getElementById('scanTableBody');
+            const scanTable = document.getElementById('scanTable');
+            const emptyList = document.getElementById('emptyList');
+            const totalCount = document.getElementById('totalCount');
+            const exportCsvBtn = document.getElementById('exportCsvBtn');
+            const shareWaBtn = document.getElementById('shareWaBtn');
+            const shareEmailBtn = document.getElementById('shareEmailBtn');
+            const clearListBtn = document.getElementById('clearListBtn');
+
+            let html5QrCode = null;
+            let isScanning = false;
+
+            // ===== RENDER TABLE =====
+            function renderTable() {
+                scanTableBody.innerHTML = '';
+                if (scanData.length === 0) {
+                    scanTable.style.display = 'none';
+                    emptyList.style.display = 'block';
+                    totalCount.textContent = '0';
+                    return;
+                }
+
+                scanTable.style.display = 'table';
+                emptyList.style.display = 'none';
+                totalCount.textContent = scanData.length;
+
+                scanData.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.barcode}</td>
+                        <td>${item.qty}</td>
+                        <td style="text-align:center;">
+                            <button class="delete-btn" data-id="${item.id}" title="Hapus">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    scanTableBody.appendChild(tr);
+                });
+
+                // Event listener untuk tombol delete
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        deleteItem(id);
+                    });
+                });
+            }
+
+            // ===== CRUD OPERATIONS =====
+            function addItem(barcode, qty) {
+                // Cek duplikat barcode, jika ada update qty
+                const existing = scanData.find(item => item.barcode === barcode);
+                if (existing) {
+                    existing.qty = parseInt(existing.qty) + parseInt(qty);
+                } else {
+                    scanData.push({
+                        id: ++idCounter,
+                        barcode: barcode,
+                        qty: parseInt(qty)
+                    });
+                }
+                renderTable();
+                saveToLocalStorage();
+            }
+
+            function deleteItem(id) {
+                if (confirm('Hapus item ini?')) {
+                    scanData = scanData.filter(item => item.id !== id);
+                    renderTable();
+                    saveToLocalStorage();
+                }
+            }
+
+            function clearAll() {
+                if (scanData.length === 0) return;
+                if (confirm('Hapus semua data?')) {
+                    scanData = [];
+                    idCounter = 0;
+                    renderTable();
+                    saveToLocalStorage();
+                }
+            }
+
+            // ===== LOCAL STORAGE =====
+            function saveToLocalStorage() {
+                try {
+                    localStorage.setItem('scanData', JSON.stringify(scanData));
+                    localStorage.setItem('idCounter', idCounter.toString());
+                } catch (e) {
+                    console.warn('Gagal simpan ke localStorage:', e);
+                }
+            }
+
+            function loadFromLocalStorage() {
+                try {
+                    const saved = localStorage.getItem('scanData');
+                    const savedId = localStorage.getItem('idCounter');
+                    if (saved) {
+                        scanData = JSON.parse(saved);
+                    }
+                    if (savedId) {
+                        idCounter = parseInt(savedId);
+                    }
+                    renderTable();
+                } catch (e) {
+                    console.warn('Gagal load dari localStorage:', e);
+                }
+            }
+
+            // ===== EXPORT CSV =====
+            function generateCSV() {
+                if (scanData.length === 0) {
+                    alert('Tidak ada data untuk diexport!');
+                    return null;
+                }
+                // Format: barcode|qty
+                const header = 'PLU|QTY';
+                const rows = scanData.map(item => `${item.barcode}|${item.qty}`);
+                return [header, ...rows].join('\n');
+            }
+
+            function exportCSV() {
+                const csv = generateCSV();
+                if (!csv) return;
+
+                // Download sebagai file
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.href = url;
+                link.setAttribute('download', `scan_${new Date().toISOString().slice(0,10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+
+            // ===== SHARE VIA WHATSAPP =====
+            function shareWhatsApp() {
+                const csv = generateCSV();
+                if (!csv) return;
+
+                const encoded = encodeURIComponent(csv);
+                const waUrl = `https://wa.me/?text=${encoded}`;
+                window.open(waUrl, '_blank');
+            }
+
+            // ===== SHARE VIA EMAIL =====
+            function shareEmail() {
+                const csv = generateCSV();
+                if (!csv) return;
+
+                const subject = encodeURIComponent('Data Scan Barcode');
+                const body = encodeURIComponent(csv);
+                const mailto = `mailto:?subject=${subject}&body=${body}`;
+                window.location.href = mailto;
+            }
+
+            // ===== SCAN BARCODE =====
+            function openScanner() {
+                modal.classList.add('active');
+                scanResult.classList.remove('show');
+                barcodeResult.textContent = '-';
+                qtyInput.value = '1';
+
+                if (html5QrCode) {
+                    html5QrCode.clear();
+                    html5QrCode = null;
+                }
+
+                html5QrCode = new Html5Qrcode("reader");
+
+                const config = {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                };
+
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    config,
+                    onScanSuccess,
+                    onScanError
+                ).then(() => {
+                    isScanning = true;
+                }).catch(err => {
+                    console.error("Gagal buka kamera:", err);
+                    alert("Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.");
+                    closeScanner();
+                });
+            }
+
+            function onScanSuccess(decodedText, decodedResult) {
+                if (isScanning) {
+                    isScanning = false;
+                    if (html5QrCode) {
+                        html5QrCode.stop().then(() => {
+                            html5QrCode.clear();
+                        }).catch(err => console.warn(err));
+                    }
+
+                    barcodeResult.textContent = decodedText;
+                    scanResult.classList.add('show');
+                }
+            }
+
+            function onScanError(err) {
+                // Abaikan
+            }
+
+            function closeScanner() {
+                if (html5QrCode) {
+                    try {
+                        html5QrCode.stop().then(() => {
+                            html5QrCode.clear();
+                            html5QrCode = null;
+                        }).catch(() => {});
+                    } catch(e) {}
+                }
+                isScanning = false;
+                modal.classList.remove('active');
+                scanResult.classList.remove('show');
+            }
+
+            // ===== EVENT LISTENERS =====
+            scanBtn.addEventListener('click', openScanner);
+
+            closeModal.addEventListener('click', closeScanner);
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeScanner();
+                }
+            });
+
+            rescanBtn.addEventListener('click', function() {
+                scanResult.classList.remove('show');
+                if (html5QrCode) {
+                    html5QrCode.stop().then(() => {
+                        html5QrCode.clear();
+                        html5QrCode = null;
+                        isScanning = false;
+                        openScanner();
+                    }).catch(() => {
+                        openScanner();
+                    });
+                } else {
+                    openScanner();
+                }
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                const barcode = barcodeResult.textContent;
+                const qty = qtyInput.value || '1';
+
+                if (barcode === '-' || barcode.trim() === '') {
+                    alert('Silakan scan barcode terlebih dahulu!');
+                    return;
+                }
+
+                if (parseInt(qty) < 1 || isNaN(parseInt(qty))) {
+                    alert('Masukkan qty yang valid (minimal 1)');
+                    return;
+                }
+
+                // Tambahkan ke list
+                addItem(barcode.trim(), parseInt(qty));
+
+                // Tutup modal
+                closeScanner();
+            });
+
+            // Tombol aksi
+            exportCsvBtn.addEventListener('click', exportCSV);
+            shareWaBtn.addEventListener('click', shareWhatsApp);
+            shareEmailBtn.addEventListener('click', shareEmail);
+            clearListBtn.addEventListener('click', clearAll);
+
+            // Tutup modal dengan ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeScanner();
+                }
+            });
+
+            // ===== LOAD DATA =====
+            loadFromLocalStorage();
+
+        })();
+    </script>
+</body>
+</html>
