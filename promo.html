@@ -453,6 +453,29 @@
             margin-right: 0.2rem;
         }
 
+        /* Style untuk tanggal promo */
+        .promo-card .promo-dates {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #4b718a;
+            background: #f0f6fb;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .promo-card .promo-dates i {
+            margin-right: 0.3rem;
+            color: #2a7faa;
+        }
+
+        .promo-card .promo-dates .date-item {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
         .promo-card .promo-footer {
             display: flex;
             justify-content: space-between;
@@ -602,6 +625,11 @@
             .scanner-box {
                 padding: 1rem;
                 margin: 0.5rem;
+            }
+
+            .promo-card .promo-dates {
+                flex-direction: column;
+                gap: 0.3rem;
             }
         }
 
@@ -815,6 +843,8 @@
                     const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal']);
                     const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price']);
                     const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail']);
+                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai']);
+                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai']);
 
                     allPromos = jsonData.map((row, index) => {
                         const nama = nameKey ? (row[nameKey] || 'Promo ' + (index + 1)) : ('Promo ' + (index +
@@ -825,6 +855,37 @@
                         const hargaDiskon = discountKey ? parseFloat(row[discountKey]) || 0 : 0;
                         const deskripsi = descKey ? String(row[descKey] || '').trim() : '';
 
+                        // Format tanggal
+                        let startDate = '';
+                        let endDate = '';
+                        if (startDateKey && row[startDateKey]) {
+                            const rawStart = row[startDateKey];
+                            if (typeof rawStart === 'number') {
+                                // Serial number Excel
+                                const dateObj = new Date((rawStart - 25569) * 86400 * 1000);
+                                startDate = dateObj.toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                            } else {
+                                startDate = String(rawStart).trim();
+                            }
+                        }
+                        if (endDateKey && row[endDateKey]) {
+                            const rawEnd = row[endDateKey];
+                            if (typeof rawEnd === 'number') {
+                                const dateObj = new Date((rawEnd - 25569) * 86400 * 1000);
+                                endDate = dateObj.toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                            } else {
+                                endDate = String(rawEnd).trim();
+                            }
+                        }
+
                         return {
                             id: index + 1,
                             nama: String(nama).trim(),
@@ -833,6 +894,8 @@
                             hargaNormal: hargaNormal,
                             hargaDiskon: hargaDiskon || hargaNormal * 0.8,
                             deskripsi: String(deskripsi).trim(),
+                            startDate: startDate,
+                            endDate: endDate,
                             _raw: row
                         };
                     });
@@ -902,6 +965,17 @@
                         Math.round(((item.hargaNormal - item.hargaDiskon) / item.hargaNormal) * 100) :
                         0;
 
+                    // Date range display
+                    let datesHtml = '';
+                    if (item.startDate || item.endDate) {
+                        datesHtml = `
+                            <div class="promo-dates">
+                                ${item.startDate ? `<span class="date-item"><i class="fas fa-calendar-alt"></i> Mulai: ${escapeHtml(item.startDate)}</span>` : ''}
+                                ${item.endDate ? `<span class="date-item"><i class="fas fa-calendar-check"></i> Selesai: ${escapeHtml(item.endDate)}</span>` : ''}
+                            </div>
+                        `;
+                    }
+
                     card.innerHTML = `
                         <div class="promo-header">
                             <div class="promo-title">${escapeHtml(item.nama)}</div>
@@ -914,6 +988,7 @@
                             ${item.hargaNormal > 0 ? `<span class="price-original">Rp ${formatRupiah(item.hargaNormal)}</span>` : ''}
                             ${item.hargaDiskon > 0 ? `<span class="price-discount"><i class="fas fa-fire"></i> Rp ${formatRupiah(item.hargaDiskon)}</span>` : ''}
                         </div>
+                        ${datesHtml}
                         <div class="promo-footer">
                             <span><i class="fas fa-hashtag"></i> #${item.id}</span>
                             <span><i class="fas fa-clock"></i> promo aktif</span>
