@@ -371,7 +371,7 @@
         /* ===== PROMO GRID ===== */
         .promo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
@@ -437,13 +437,13 @@
         }
 
         .promo-card .price-original {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #8aaec4;
             text-decoration: line-through;
         }
 
         .promo-card .price-discount {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #e74c3c;
         }
@@ -463,7 +463,6 @@
             padding: 0.4rem 0.8rem;
             border-radius: 0.8rem;
             margin-top: 0.2rem;
-            flex-wrap: wrap;
         }
 
         .promo-card .promo-dates i {
@@ -475,32 +474,6 @@
             display: flex;
             align-items: center;
             gap: 0.2rem;
-        }
-
-        /* Status promo aktif/expired */
-        .promo-card .promo-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
-        }
-
-        .promo-card .promo-status.active {
-            background: #e8f8ee;
-            color: #1e7e34;
-        }
-
-        .promo-card .promo-status.expired {
-            background: #fde8e8;
-            color: #c0392b;
-        }
-
-        .promo-card .promo-status.coming {
-            background: #e8f0fe;
-            color: #1a5a8c;
         }
 
         .promo-card .promo-footer {
@@ -855,96 +828,31 @@
                         throw new Error('Data kosong atau format tidak sesuai');
                     }
 
-                    // Log headers untuk debugging
                     const headers = Object.keys(jsonData[0]);
-                    console.log('Headers Excel:', headers);
-
                     const mapKey = (possibleNames) => {
                         for (const name of possibleNames) {
-                            const found = headers.find(h => h.toLowerCase().replace(/_/g, '').replace(/ /g, '') ===
-                                name.toLowerCase().replace(/_/g, '').replace(/ /g, ''));
+                            const found = headers.find(h => h.toLowerCase().includes(name.toLowerCase()));
                             if (found) return found;
-                            // Coba contains
-                            const foundContains = headers.find(h => h.toLowerCase().includes(name.toLowerCase()));
-                            if (foundContains) return foundContains;
                         }
                         return null;
                     };
 
-                    // Mapping khusus untuk current_price dan promo
                     const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title']);
-                    const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode', 'sku']);
-                    const categoryKey = mapKey(['kategori', 'category', 'jenis', 'type']);
-                    
-                    // Cari current_price (harga normal)
-                    const priceKey = mapKey(['current_price', 'current price', 'harga_normal', 'harga normal', 'normal_price',
-                        'normal price', 'price', 'harga'
-                    ]);
-                    
-                    // Cari promo (harga promo)
-                    const discountKey = mapKey(['promo', 'harga_promo', 'harga promo', 'promo_price', 'promo price',
-                        'diskon', 'discount', 'discount_price'
-                    ]);
-                    
-                    const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail', 'description']);
-                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai',
-                        'start date'
-                    ]);
-                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai',
-                        'end date'
-                    ]);
-
-                    console.log('Keys found:', {
-                        nameKey,
-                        codeKey,
-                        categoryKey,
-                        priceKey,
-                        discountKey,
-                        descKey,
-                        startDateKey,
-                        endDateKey
-                    });
+                    const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode']);
+                    const categoryKey = mapKey(['kategori', 'category', 'jenis']);
+                    const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal']);
+                    const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price']);
+                    const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail']);
+                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai']);
+                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai']);
 
                     allPromos = jsonData.map((row, index) => {
                         const nama = nameKey ? (row[nameKey] || 'Promo ' + (index + 1)) : ('Promo ' + (index +
                         1));
                         const kode = codeKey ? String(row[codeKey] || '').trim() : '';
                         const kategori = categoryKey ? String(row[categoryKey] || '').trim() : '';
-                        
-                        // Ambil current_price (harga normal)
-                        let hargaNormal = 0;
-                        if (priceKey && row[priceKey] !== undefined && row[priceKey] !== null && row[priceKey] !==
-                            '') {
-                            // Jika value berupa string dengan Rp atau koma
-                            let val = String(row[priceKey]).replace(/[^0-9,.-]/g, '').replace(/,/g, '.');
-                            hargaNormal = parseFloat(val) || 0;
-                        }
-                        
-                        // Ambil promo (harga diskon)
-                        let hargaDiskon = 0;
-                        if (discountKey && row[discountKey] !== undefined && row[discountKey] !== null && row[
-                                discountKey] !== '') {
-                            let val = String(row[discountKey]).replace(/[^0-9,.-]/g, '').replace(/,/g, '.');
-                            hargaDiskon = parseFloat(val) || 0;
-                        }
-                        
-                        // Jika harga diskon 0, coba hitung dari diskon persen
-                        if (hargaDiskon === 0 && hargaNormal > 0) {
-                            // Coba cari kolom diskon persen
-                            const discPercentKey = mapKey(['diskon_persen', 'discount_percent', 'persen', '%']);
-                            if (discPercentKey && row[discPercentKey]) {
-                                const persen = parseFloat(String(row[discPercentKey]).replace(/[^0-9.]/g, '')) || 0;
-                                if (persen > 0) {
-                                    hargaDiskon = hargaNormal - (hargaNormal * persen / 100);
-                                }
-                            }
-                        }
-                        
-                        // Jika masih 0, pakai 80% dari harga normal
-                        if (hargaDiskon === 0 && hargaNormal > 0) {
-                            hargaDiskon = hargaNormal * 0.8;
-                        }
-
+                        const hargaNormal = priceKey ? parseFloat(row[priceKey]) || 0 : 0;
+                        const hargaDiskon = discountKey ? parseFloat(row[discountKey]) || 0 : 0;
                         const deskripsi = descKey ? String(row[descKey] || '').trim() : '';
 
                         // Format tanggal
@@ -953,14 +861,13 @@
                         if (startDateKey && row[startDateKey]) {
                             const rawStart = row[startDateKey];
                             if (typeof rawStart === 'number') {
+                                // Serial number Excel
                                 const dateObj = new Date((rawStart - 25569) * 86400 * 1000);
-                                if (!isNaN(dateObj.getTime())) {
-                                    startDate = dateObj.toLocaleDateString('id-ID', {
-                                        day: '2-digit',
-                                        month: 'short',
-                                        year: 'numeric'
-                                    });
-                                }
+                                startDate = dateObj.toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
                             } else {
                                 startDate = String(rawStart).trim();
                             }
@@ -969,13 +876,11 @@
                             const rawEnd = row[endDateKey];
                             if (typeof rawEnd === 'number') {
                                 const dateObj = new Date((rawEnd - 25569) * 86400 * 1000);
-                                if (!isNaN(dateObj.getTime())) {
-                                    endDate = dateObj.toLocaleDateString('id-ID', {
-                                        day: '2-digit',
-                                        month: 'short',
-                                        year: 'numeric'
-                                    });
-                                }
+                                endDate = dateObj.toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
                             } else {
                                 endDate = String(rawEnd).trim();
                             }
@@ -987,7 +892,7 @@
                             kode: kode,
                             kategori: String(kategori).trim(),
                             hargaNormal: hargaNormal,
-                            hargaDiskon: hargaDiskon,
+                            hargaDiskon: hargaDiskon || hargaNormal * 0.8,
                             deskripsi: String(deskripsi).trim(),
                             startDate: startDate,
                             endDate: endDate,
@@ -1025,52 +930,6 @@
                 }
             }
 
-            // ===== CEK STATUS PROMO =====
-            function getPromoStatus(startDate, endDate) {
-                if (!startDate && !endDate) return { status: 'active', label: 'Aktif', icon: 'fa-check-circle' };
-                
-                const now = new Date();
-                let start = null;
-                let end = null;
-                
-                // Parse start date
-                if (startDate) {
-                    const parts = startDate.split(' ');
-                    if (parts.length === 3) {
-                        const bulanMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'Mei': 4, 'Jun': 5, 'Jul': 6, 'Agu': 7, 'Sep': 8, 'Okt': 9, 'Nov': 10, 'Des': 11 };
-                        const day = parseInt(parts[0]);
-                        const month = bulanMap[parts[1]];
-                        const year = parseInt(parts[2]);
-                        if (!isNaN(day) && month !== undefined && !isNaN(year)) {
-                            start = new Date(year, month, day);
-                        }
-                    }
-                }
-                
-                if (endDate) {
-                    const parts = endDate.split(' ');
-                    if (parts.length === 3) {
-                        const bulanMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'Mei': 4, 'Jun': 5, 'Jul': 6, 'Agu': 7, 'Sep': 8, 'Okt': 9, 'Nov': 10, 'Des': 11 };
-                        const day = parseInt(parts[0]);
-                        const month = bulanMap[parts[1]];
-                        const year = parseInt(parts[2]);
-                        if (!isNaN(day) && month !== undefined && !isNaN(year)) {
-                            end = new Date(year, month, day);
-                        }
-                    }
-                }
-                
-                if (start && end) {
-                    if (now < start) return { status: 'coming', label: 'Akan Datang', icon: 'fa-clock' };
-                    if (now > end) return { status: 'expired', label: 'Kadaluarsa', icon: 'fa-times-circle' };
-                    return { status: 'active', label: 'Aktif', icon: 'fa-check-circle' };
-                }
-                
-                if (end && now > end) return { status: 'expired', label: 'Kadaluarsa', icon: 'fa-times-circle' };
-                
-                return { status: 'active', label: 'Aktif', icon: 'fa-check-circle' };
-            }
-
             // ===== RENDER =====
             function renderPage(page, highlightKode = null) {
                 if (isLoading) return;
@@ -1097,6 +956,7 @@
                 pageData.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'promo-card';
+                    // Highlight jika kode cocok
                     if (highlightKode && item.kode === highlightKode) {
                         card.classList.add('highlight');
                     }
@@ -1104,12 +964,6 @@
                     const diskonPersen = item.hargaNormal > 0 ?
                         Math.round(((item.hargaNormal - item.hargaDiskon) / item.hargaNormal) * 100) :
                         0;
-
-                    // Status promo
-                    const status = getPromoStatus(item.startDate, item.endDate);
-                    const statusClass = status.status;
-                    const statusLabel = status.label;
-                    const statusIcon = status.icon;
 
                     // Date range display
                     let datesHtml = '';
@@ -1125,10 +979,7 @@
                     card.innerHTML = `
                         <div class="promo-header">
                             <div class="promo-title">${escapeHtml(item.nama)}</div>
-                            <div style="display:flex; gap:0.3rem; flex-wrap:wrap; align-items:center;">
-                                ${diskonPersen > 0 ? `<span class="promo-badge">−${diskonPersen}%</span>` : ''}
-                                <span class="promo-status ${statusClass}"><i class="fas ${statusIcon}"></i> ${statusLabel}</span>
-                            </div>
+                            ${diskonPersen > 0 ? `<span class="promo-badge">−${diskonPersen}%</span>` : ''}
                         </div>
                         ${item.kode ? `<div class="promo-detail"><i class="fas fa-barcode"></i> ${escapeHtml(item.kode)}</div>` : ''}
                         ${item.kategori ? `<div class="promo-detail"><i class="fas fa-tag"></i> ${escapeHtml(item.kategori)}</div>` : ''}
@@ -1140,7 +991,7 @@
                         ${datesHtml}
                         <div class="promo-footer">
                             <span><i class="fas fa-hashtag"></i> #${item.id}</span>
-                            <span><i class="fas fa-clock"></i> ${statusLabel.toLowerCase()}</span>
+                            <span><i class="fas fa-clock"></i> promo aktif</span>
                         </div>
                     `;
                     promoGrid.appendChild(card);
@@ -1151,6 +1002,7 @@
                 paginationContainer.style.display = 'flex';
 
                 if (highlightKode) {
+                    // Scroll ke card highlight
                     const highlighted = document.querySelector('.promo-card.highlight');
                     if (highlighted) {
                         setTimeout(() => {
@@ -1224,8 +1076,7 @@
                     filteredPromos = [...allPromos];
                 } else {
                     filteredPromos = allPromos.filter(item => {
-                        const searchText =
-                            `${item.nama} ${item.kode} ${item.kategori} ${item.deskripsi}`.toLowerCase();
+                        const searchText = `${item.nama} ${item.kode} ${item.kategori} ${item.deskripsi}`.toLowerCase();
                         return searchText.includes(keyword);
                     });
                 }
@@ -1239,6 +1090,7 @@
                 isScannerOpen = true;
                 scannerOverlay.classList.add('active');
 
+                // Cek dukungan kamera
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                     alert('Perangkat tidak mendukung akses kamera. Silakan input kode manual.');
                     return;
@@ -1269,6 +1121,7 @@
             }
 
             function onScanSuccess(decodedText, decodedResult) {
+                // Berhenti scan setelah berhasil
                 if (html5QrCode) {
                     html5QrCode.stop().then(() => {
                         html5QrCode.clear();
@@ -1276,12 +1129,13 @@
                 }
                 closeScannerModal();
 
+                // Cari promo dengan kode yang cocok
                 const kode = decodedText.trim();
                 searchByBarcode(kode);
             }
 
             function onScanError(err) {
-                // Ignore
+                // Tidak perlu log setiap error, cukup ignore
             }
 
             function searchByBarcode(kode) {
@@ -1290,13 +1144,17 @@
                     return;
                 }
 
+                // Cari di semua data
                 const found = allPromos.filter(item => item.kode === kode);
                 if (found.length > 0) {
+                    // Filter hanya yang cocok
                     filteredPromos = found;
                     updateTotalBadge();
                     renderPage(1, kode);
+                    // Tampilkan notifikasi
                     showToast(`Ditemukan ${found.length} promo untuk kode: ${kode}`);
                 } else {
+                    // Coba cari parsial
                     const partial = allPromos.filter(item =>
                         item.kode.toLowerCase().includes(kode.toLowerCase())
                     );
@@ -1307,11 +1165,13 @@
                         showToast(`Ditemukan ${partial.length} promo dengan kode mengandung: ${kode}`);
                     } else {
                         showToast(`Tidak ditemukan promo untuk kode: ${kode}`, 'error');
+                        // Reset ke semua data
                         filteredPromos = [...allPromos];
                         updateTotalBadge();
                         renderPage(1);
                     }
                 }
+                // Set input search
                 searchInput.value = kode;
                 clearBtn.classList.add('show');
             }
@@ -1327,10 +1187,11 @@
                 }
                 isScannerOpen = false;
                 scannerOverlay.classList.remove('active');
+                // Kosongkan reader
                 document.getElementById('reader').innerHTML = '';
             }
 
-            // ===== TOAST =====
+            // ===== TOAST SEDERHANA =====
             function showToast(message, type = 'success') {
                 const toast = document.createElement('div');
                 toast.style.cssText = `
@@ -1351,8 +1212,7 @@
                     animation: fadeIn 0.3s ease;
                     border: 1px solid rgba(255,255,255,0.2);
                 `;
-                toast.innerHTML =
-                    `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+                toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
                 document.body.appendChild(toast);
                 setTimeout(() => {
                     toast.style.opacity = '0';
@@ -1378,7 +1238,7 @@
                 totalBadge.innerHTML = `<i class="fas fa-tag"></i> ${total} promo`;
             }
 
-            // ===== NAVIGASI =====
+            // ===== NAVIGASI GLOBAL =====
             window.goToPage = function(page) {
                 if (page < 1 || page > totalPages || page === currentPage) return;
                 renderPage(page);
@@ -1417,6 +1277,7 @@
                 searchInput.focus();
             });
 
+            // === SCAN BUTTON ===
             scanBtn.addEventListener('click', function() {
                 startScanner();
             });
@@ -1425,12 +1286,14 @@
                 closeScannerModal();
             });
 
+            // Tutup scanner klik overlay
             scannerOverlay.addEventListener('click', function(e) {
                 if (e.target === scannerOverlay) {
                     closeScannerModal();
                 }
             });
 
+            // Manual barcode
             manualBarcodeBtn.addEventListener('click', function() {
                 const kode = manualBarcode.value.trim();
                 if (kode) {
@@ -1455,6 +1318,7 @@
             // ===== START =====
             fetchExcelData();
 
+            // Cleanup jika halaman ditutup
             window.addEventListener('beforeunload', function() {
                 if (html5QrCode) {
                     try {
