@@ -11,6 +11,7 @@
     <!-- html5-qrcode untuk scan barcode -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
+        /* ===== CSS SAMA SEPERTI SEBELUMNYA ===== */
         * {
             margin: 0;
             padding: 0;
@@ -29,7 +30,6 @@
             margin: 0 auto;
         }
 
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             align-items: center;
@@ -109,7 +109,91 @@
             font-weight: 600;
         }
 
-        /* ===== SEARCH + FILTER SECTION ===== */
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .upload-section .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .upload-section .upload-btn-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-section .upload-btn {
+            background: #1d5d7a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-section .upload-btn:active {
+            transform: scale(0.95);
+        }
+
+        .upload-section .file-status {
+            font-size: 0.85rem;
+            color: #4b718a;
+        }
+
+        .upload-section .file-status i {
+            color: #27ae60;
+        }
+
+        .upload-section .load-online-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-section .load-online-btn:active {
+            transform: scale(0.95);
+        }
+
+        .upload-section .load-online-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Search & Filter */
         .search-section {
             margin-bottom: 1.5rem;
         }
@@ -179,7 +263,6 @@
             transform: scale(0.95);
         }
 
-        /* Tombol Scan Barcode */
         .scan-btn {
             background: #27ae60;
             color: white;
@@ -204,7 +287,6 @@
             font-size: 1rem;
         }
 
-        /* ===== FILTER TANGGAL ===== */
         .filter-section {
             background: white;
             border-radius: 1.5rem;
@@ -287,7 +369,7 @@
             transform: scale(0.95);
         }
 
-        /* ===== SCANNER MODAL ===== */
+        /* Scanner Modal */
         .scanner-overlay {
             display: none;
             position: fixed;
@@ -429,7 +511,7 @@
             transform: scale(0.95);
         }
 
-        /* ===== LOADING ===== */
+        /* Loading */
         .loading {
             text-align: center;
             padding: 3rem;
@@ -452,7 +534,7 @@
             }
         }
 
-        /* ===== PROMO GRID ===== */
+        /* Promo Grid */
         .promo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -537,7 +619,6 @@
             margin-right: 0.2rem;
         }
 
-        /* Style untuk tanggal promo */
         .promo-card .promo-dates {
             display: flex;
             gap: 1rem;
@@ -572,7 +653,6 @@
             color: #6b8fa8;
         }
 
-        /* Highlight untuk hasil scan */
         .promo-card.highlight {
             border: 3px solid #27ae60;
             box-shadow: 0 8px 25px rgba(39, 174, 96, 0.25);
@@ -580,7 +660,7 @@
             transition: all 0.3s;
         }
 
-        /* ===== PAGINATION ===== */
+        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
@@ -624,7 +704,7 @@
             color: #4b718a;
         }
 
-        /* ===== EMPTY STATE ===== */
+        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -643,7 +723,7 @@
             margin-bottom: 0.3rem;
         }
 
-        /* ===== FOOTER ===== */
+        /* Footer */
         .footer-note {
             margin-top: 1.5rem;
             text-align: center;
@@ -667,7 +747,7 @@
             color: #2a7faa;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* Responsive */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem 1.2rem;
@@ -711,6 +791,11 @@
             .filter-section input[type="date"] {
                 width: 100%;
                 min-width: unset;
+            }
+
+            .upload-section {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .promo-grid {
@@ -782,7 +867,6 @@
             }
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -820,6 +904,20 @@
             </div>
         </div>
 
+        <!-- UPLOAD SECTION -->
+        <div class="upload-section">
+            <button class="load-online-btn" id="loadOnlineBtn">
+                <i class="fas fa-cloud-download-alt"></i> Muat dari GitHub
+            </button>
+            <div class="upload-btn-wrapper">
+                <button class="upload-btn"><i class="fas fa-upload"></i> Upload Excel</button>
+                <input type="file" id="fileInput" accept=".xlsx,.xls">
+            </div>
+            <span class="file-status" id="fileStatus">
+                <i class="fas fa-info-circle"></i> Klik "Muat dari GitHub" atau upload file
+            </span>
+        </div>
+
         <!-- SEARCH + SCAN -->
         <div class="search-section">
             <div class="search-box">
@@ -850,9 +948,9 @@
         </div>
 
         <!-- LOADING -->
-        <div id="loadingIndicator" class="loading">
+        <div id="loadingIndicator" class="loading" style="display:none;">
             <i class="fas fa-spinner"></i>
-            <p>Memuat data promo...</p>
+            <p id="loadingText">Memuat data promo...</p>
         </div>
 
         <!-- PROMO GRID -->
@@ -865,7 +963,7 @@
         <div id="emptyState" class="empty-state" style="display:none;">
             <i class="fas fa-inbox"></i>
             <h3>Tidak ada promo ditemukan</h3>
-            <p>Coba kata kunci lain atau refresh halaman</p>
+            <p>Coba kata kunci lain atau muat data dari GitHub</p>
         </div>
 
         <!-- FOOTER -->
@@ -898,7 +996,8 @@
         (function() {
             // ===== KONFIGURASI =====
             const ITEMS_PER_PAGE = 10;
-            const EXCEL_URL = 'https://raw.githubusercontent.com/nailashafa1/pimm/main/promo.xlsx';
+            // URL RAW file dari GitHub (gunakan raw.githubusercontent.com)
+            const EXCEL_URL = 'https://raw.githubusercontent.com/nailashafa1/fhpim/main/promo.xlsx';
 
             // ===== STATE =====
             let allPromos = [];
@@ -914,6 +1013,7 @@
 
             // ===== DOM ELEMENTS =====
             const loadingEl = document.getElementById('loadingIndicator');
+            const loadingText = document.getElementById('loadingText');
             const promoGrid = document.getElementById('promoGrid');
             const paginationContainer = document.getElementById('paginationContainer');
             const emptyState = document.getElementById('emptyState');
@@ -930,145 +1030,117 @@
             const endDateFilter = document.getElementById('endDateFilter');
             const filterDateBtn = document.getElementById('filterDateBtn');
             const resetFilterBtn = document.getElementById('resetFilterBtn');
+            const fileInput = document.getElementById('fileInput');
+            const fileStatus = document.getElementById('fileStatus');
+            const loadOnlineBtn = document.getElementById('loadOnlineBtn');
 
-            // ===== AMBIL DATA DARI EXCEL =====
-            async function fetchExcelData() {
-                try {
-                    isLoading = true;
-                    loadingEl.style.display = 'block';
-                    promoGrid.style.display = 'none';
-                    paginationContainer.style.display = 'none';
-                    emptyState.style.display = 'none';
+            // ===== PROSES DATA EXCEL =====
+            function processExcelData(jsonData) {
+                if (!jsonData || jsonData.length === 0) {
+                    throw new Error('Data kosong atau format tidak sesuai');
+                }
 
-                    const response = await fetch(EXCEL_URL);
-                    if (!response.ok) {
-                        throw new Error(`Gagal mengambil file: ${response.status}`);
+                const headers = Object.keys(jsonData[0]);
+                const mapKey = (possibleNames) => {
+                    for (const name of possibleNames) {
+                        const found = headers.find(h => h.toLowerCase().includes(name.toLowerCase()));
+                        if (found) return found;
                     }
+                    return null;
+                };
 
-                    const arrayBuffer = await response.arrayBuffer();
-                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                // Cari kolom yang sesuai
+                const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title', 'description', 'desc', 'plu']);
+                const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode']);
+                const categoryKey = mapKey(['kategori', 'category', 'jenis']);
+                const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal', 'current_price', 'current price']);
+                const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price', 'promo']);
+                const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail']);
+                const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai', 'start']);
+                const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai', 'end']);
 
-                    if (!jsonData || jsonData.length === 0) {
-                        throw new Error('Data kosong atau format tidak sesuai');
-                    }
+                const result = jsonData.map((row, index) => {
+                    const nama = nameKey ? (row[nameKey] || 'Promo ' + (index + 1)) : ('Promo ' + (index + 1));
+                    const kode = codeKey ? String(row[codeKey] || '').trim() : '';
+                    const kategori = categoryKey ? String(row[categoryKey] || '').trim() : '';
+                    const hargaNormal = priceKey ? parseFloat(row[priceKey]) || 0 : 0;
+                    const hargaDiskon = discountKey ? parseFloat(row[discountKey]) || 0 : 0;
+                    const deskripsi = descKey ? String(row[descKey] || '').trim() : '';
 
-                    const headers = Object.keys(jsonData[0]);
-                    const mapKey = (possibleNames) => {
-                        for (const name of possibleNames) {
-                            const found = headers.find(h => h.toLowerCase().includes(name.toLowerCase()));
-                            if (found) return found;
+                    let startDate = '';
+                    let endDate = '';
+                    let startDateObj = null;
+                    let endDateObj = null;
+
+                    if (startDateKey && row[startDateKey]) {
+                        const rawStart = row[startDateKey];
+                        if (typeof rawStart === 'number') {
+                            const dateObj = new Date((rawStart - 25569) * 86400 * 1000);
+                            startDate = dateObj.toLocaleDateString('id-ID', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            });
+                            startDateObj = dateObj;
+                        } else {
+                            startDate = String(rawStart).trim();
+                            const parsed = new Date(startDate);
+                            if (!isNaN(parsed)) {
+                                startDateObj = parsed;
+                            }
                         }
-                        return null;
+                    }
+                    if (endDateKey && row[endDateKey]) {
+                        const rawEnd = row[endDateKey];
+                        if (typeof rawEnd === 'number') {
+                            const dateObj = new Date((rawEnd - 25569) * 86400 * 1000);
+                            endDate = dateObj.toLocaleDateString('id-ID', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            });
+                            endDateObj = dateObj;
+                        } else {
+                            endDate = String(rawEnd).trim();
+                            const parsed = new Date(endDate);
+                            if (!isNaN(parsed)) {
+                                endDateObj = parsed;
+                            }
+                        }
+                    }
+
+                    return {
+                        id: index + 1,
+                        nama: String(nama).trim(),
+                        kode: kode,
+                        kategori: String(kategori).trim(),
+                        hargaNormal: hargaNormal,
+                        hargaDiskon: hargaDiskon || hargaNormal * 0.8,
+                        deskripsi: String(deskripsi).trim(),
+                        startDate: startDate,
+                        endDate: endDate,
+                        startDateObj: startDateObj,
+                        endDateObj: endDateObj,
+                        _raw: row
                     };
+                });
 
-                    const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title', 'description']);
-                    const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode']);
-                    const categoryKey = mapKey(['kategori', 'category', 'jenis']);
-                    const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal']);
-                    const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price']);
-                    const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail']);
-                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai', 'start']);
-                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai', 'end']);
+                return result.filter(p => p.nama && p.nama.length > 0);
+            }
 
-                    allPromos = jsonData.map((row, index) => {
-                        const nama = nameKey ? (row[nameKey] || 'Promo ' + (index + 1)) : ('Promo ' + (index +
-                        1));
-                        const kode = codeKey ? String(row[codeKey] || '').trim() : '';
-                        const kategori = categoryKey ? String(row[categoryKey] || '').trim() : '';
-                        const hargaNormal = priceKey ? parseFloat(row[priceKey]) || 0 : 0;
-                        const hargaDiskon = discountKey ? parseFloat(row[discountKey]) || 0 : 0;
-                        const deskripsi = descKey ? String(row[descKey] || '').trim() : '';
-
-                        // Format tanggal
-                        let startDate = '';
-                        let endDate = '';
-                        let startDateObj = null;
-                        let endDateObj = null;
-
-                        if (startDateKey && row[startDateKey]) {
-                            const rawStart = row[startDateKey];
-                            if (typeof rawStart === 'number') {
-                                // Serial number Excel
-                                const dateObj = new Date((rawStart - 25569) * 86400 * 1000);
-                                startDate = dateObj.toLocaleDateString('id-ID', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: 'numeric'
-                                });
-                                startDateObj = dateObj;
-                            } else {
-                                startDate = String(rawStart).trim();
-                                // Coba parse tanggal
-                                const parsed = new Date(startDate);
-                                if (!isNaN(parsed)) {
-                                    startDateObj = parsed;
-                                }
-                            }
-                        }
-                        if (endDateKey && row[endDateKey]) {
-                            const rawEnd = row[endDateKey];
-                            if (typeof rawEnd === 'number') {
-                                const dateObj = new Date((rawEnd - 25569) * 86400 * 1000);
-                                endDate = dateObj.toLocaleDateString('id-ID', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: 'numeric'
-                                });
-                                endDateObj = dateObj;
-                            } else {
-                                endDate = String(rawEnd).trim();
-                                const parsed = new Date(endDate);
-                                if (!isNaN(parsed)) {
-                                    endDateObj = parsed;
-                                }
-                            }
-                        }
-
-                        return {
-                            id: index + 1,
-                            nama: String(nama).trim(),
-                            kode: kode,
-                            kategori: String(kategori).trim(),
-                            hargaNormal: hargaNormal,
-                            hargaDiskon: hargaDiskon || hargaNormal * 0.8,
-                            deskripsi: String(deskripsi).trim(),
-                            startDate: startDate,
-                            endDate: endDate,
-                            startDateObj: startDateObj,
-                            endDateObj: endDateObj,
-                            _raw: row
-                        };
-                    });
-
-                    allPromos = allPromos.filter(p => p.nama && p.nama.length > 0);
-
-                    if (allPromos.length === 0) {
-                        throw new Error('Tidak ada data valid setelah diproses');
-                    }
-
-                    filteredPromos = [...allPromos];
-                    updateTotalBadge();
-                    renderPage(1);
-                    searchInput.value = '';
-                    clearBtn.classList.remove('show');
-
-                } catch (error) {
-                    console.error('Error loading Excel:', error);
-                    loadingEl.innerHTML = `
-                        <i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i>
-                        <p style="color:#e67e22; font-weight:600;">Gagal memuat data</p>
-                        <p style="font-size:0.85rem;">${error.message}</p>
-                        <button onclick="location.reload()" style="margin-top:1rem; padding:0.5rem 1.5rem; background:#1d5d7a; color:white; border:none; border-radius:1rem; cursor:pointer; font-weight:600;">
-                            <i class="fas fa-redo"></i> Coba Lagi
-                        </button>
-                    `;
-                    loadingEl.style.display = 'block';
-                    promoGrid.style.display = 'none';
-                    paginationContainer.style.display = 'none';
-                } finally {
-                    isLoading = false;
+            // ===== LOAD DATA =====
+            function loadData(data, source = '') {
+                allPromos = data;
+                filteredPromos = [...allPromos];
+                updateTotalBadge();
+                renderPage(1);
+                searchInput.value = '';
+                clearBtn.classList.remove('show');
+                loadingEl.style.display = 'none';
+                promoGrid.style.display = 'grid';
+                
+                if (source) {
+                    fileStatus.innerHTML = `<i class="fas fa-check-circle" style="color:#27ae60;"></i> ${source} (${data.length} data)`;
                 }
             }
 
@@ -1098,7 +1170,6 @@
                 pageData.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'promo-card';
-                    // Highlight jika kode cocok
                     if (highlightKode && item.kode === highlightKode) {
                         card.classList.add('highlight');
                     }
@@ -1107,7 +1178,6 @@
                         Math.round(((item.hargaNormal - item.hargaDiskon) / item.hargaNormal) * 100) :
                         0;
 
-                    // Date range display
                     let datesHtml = '';
                     if (item.startDate || item.endDate) {
                         datesHtml = `
@@ -1144,7 +1214,6 @@
                 paginationContainer.style.display = 'flex';
 
                 if (highlightKode) {
-                    // Scroll ke card highlight
                     const highlighted = document.querySelector('.promo-card.highlight');
                     if (highlighted) {
                         setTimeout(() => {
@@ -1217,10 +1286,8 @@
                 currentStartDate = startDate || '';
                 currentEndDate = endDate || '';
 
-                // Mulai dengan semua data
                 let result = [...allPromos];
 
-                // Filter berdasarkan keyword
                 if (keyword && keyword.trim()) {
                     const search = keyword.toLowerCase().trim();
                     result = result.filter(item => {
@@ -1229,7 +1296,6 @@
                     });
                 }
 
-                // Filter berdasarkan start date
                 if (startDate) {
                     const startFilter = new Date(startDate);
                     startFilter.setHours(0, 0, 0, 0);
@@ -1241,7 +1307,6 @@
                     });
                 }
 
-                // Filter berdasarkan end date
                 if (endDate) {
                     const endFilter = new Date(endDate);
                     endFilter.setHours(0, 0, 0, 0);
@@ -1253,7 +1318,6 @@
                     });
                 }
 
-                // Filter range: start_date >= startFilter AND end_date <= endFilter
                 if (startDate && endDate) {
                     const startFilter = new Date(startDate);
                     startFilter.setHours(0, 0, 0, 0);
@@ -1280,7 +1344,6 @@
                 isScannerOpen = true;
                 scannerOverlay.classList.add('active');
 
-                // Cek dukungan kamera
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                     alert('Perangkat tidak mendukung akses kamera. Silakan input kode manual.');
                     return;
@@ -1311,7 +1374,6 @@
             }
 
             function onScanSuccess(decodedText, decodedResult) {
-                // Berhenti scan setelah berhasil
                 if (html5QrCode) {
                     html5QrCode.stop().then(() => {
                         html5QrCode.clear();
@@ -1319,14 +1381,11 @@
                 }
                 closeScannerModal();
 
-                // Cari promo dengan kode yang cocok
                 const kode = decodedText.trim();
                 searchByBarcode(kode);
             }
 
-            function onScanError(err) {
-                // Tidak perlu log setiap error, cukup ignore
-            }
+            function onScanError(err) {}
 
             function searchByBarcode(kode) {
                 if (!kode) {
@@ -1334,16 +1393,13 @@
                     return;
                 }
 
-                // Cari di semua data
                 const found = allPromos.filter(item => item.kode === kode);
                 if (found.length > 0) {
-                    // Filter hanya yang cocok
                     filteredPromos = found;
                     updateTotalBadge();
                     renderPage(1, kode);
                     showToast(`Ditemukan ${found.length} promo untuk kode: ${kode}`);
                 } else {
-                    // Coba cari parsial
                     const partial = allPromos.filter(item =>
                         item.kode.toLowerCase().includes(kode.toLowerCase())
                     );
@@ -1354,11 +1410,9 @@
                         showToast(`Ditemukan ${partial.length} promo dengan kode mengandung: ${kode}`);
                     } else {
                         showToast(`Tidak ditemukan promo untuk kode: ${kode}`, 'error');
-                        // Reset ke semua data
                         applyFilters('', '', '');
                     }
                 }
-                // Set input search
                 searchInput.value = kode;
                 clearBtn.classList.add('show');
             }
@@ -1377,7 +1431,7 @@
                 document.getElementById('reader').innerHTML = '';
             }
 
-            // ===== TOAST SEDERHANA =====
+            // ===== TOAST =====
             function showToast(message, type = 'success') {
                 const toast = document.createElement('div');
                 toast.style.cssText = `
@@ -1430,7 +1484,64 @@
                 renderPage(page);
             };
 
+            // ===== LOAD FROM GITHUB =====
+            async function loadFromGitHub() {
+                try {
+                    isLoading = true;
+                    loadOnlineBtn.disabled = true;
+                    loadingEl.style.display = 'block';
+                    loadingText.textContent = 'Mengambil data dari GitHub...';
+                    promoGrid.style.display = 'none';
+                    paginationContainer.style.display = 'none';
+                    emptyState.style.display = 'none';
+
+                    const response = await fetch(EXCEL_URL);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const arrayBuffer = await response.arrayBuffer();
+                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                    const processedData = processExcelData(jsonData);
+                    if (processedData.length === 0) {
+                        throw new Error('Data tidak valid atau kosong');
+                    }
+
+                    loadData(processedData, 'Data dari GitHub (promo.xlsx)');
+                    showToast(`Berhasil memuat ${processedData.length} data dari GitHub`);
+
+                } catch (error) {
+                    console.error('Error loading from GitHub:', error);
+                    loadingEl.style.display = 'none';
+                    fileStatus.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal muat dari GitHub: ${error.message}`;
+                    showToast('Gagal memuat data: ' + error.message, 'error');
+                    
+                    // Tampilkan empty state
+                    emptyState.style.display = 'block';
+                    emptyState.innerHTML = `
+                        <i class="fas fa-cloud-download-alt" style="color:#e67e22;"></i>
+                        <h3>Gagal memuat data dari GitHub</h3>
+                        <p>${error.message}</p>
+                        <p style="margin-top:0.5rem; font-size:0.85rem;">
+                            <i class="fas fa-info-circle"></i> Pastikan file promo.xlsx ada di repository
+                        </p>
+                        <button onclick="location.reload()" style="margin-top:1rem; padding:0.5rem 1.5rem; background:#1d5d7a; color:white; border:none; border-radius:1rem; cursor:pointer; font-weight:600;">
+                            <i class="fas fa-redo"></i> Coba Lagi
+                        </button>
+                    `;
+                } finally {
+                    isLoading = false;
+                    loadOnlineBtn.disabled = false;
+                }
+            }
+
             // ===== EVENT LISTENERS =====
+            // Load from GitHub
+            loadOnlineBtn.addEventListener('click', loadFromGitHub);
+
             // Search
             searchBtn.addEventListener('click', function() {
                 const keyword = searchInput.value;
@@ -1527,10 +1638,42 @@
                 }
             });
 
-            // ===== START =====
-            fetchExcelData();
+            // Upload File
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
 
-            // Cleanup jika halaman ditutup
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = new Uint8Array(event.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                        
+                        const processedData = processExcelData(jsonData);
+                        if (processedData.length === 0) {
+                            showToast('Data tidak valid atau kosong!', 'error');
+                            return;
+                        }
+                        
+                        loadData(processedData, `File: ${file.name}`);
+                        showToast(`Berhasil memuat ${processedData.length} data dari ${file.name}`);
+                    } catch (error) {
+                        console.error('Error reading file:', error);
+                        showToast('Gagal membaca file: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
+            // ===== START =====
+            // Tampilkan state awal
+            loadingEl.style.display = 'block';
+            loadingText.textContent = 'Klik "Muat dari GitHub" atau upload file Excel';
+            fileStatus.innerHTML = `<i class="fas fa-info-circle"></i> Klik "Muat dari GitHub" atau upload file`;
+
+            // Cleanup
             window.addEventListener('beforeunload', function() {
                 if (html5QrCode) {
                     try {
