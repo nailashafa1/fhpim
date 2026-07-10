@@ -109,7 +109,7 @@
             font-weight: 600;
         }
 
-        /* ===== SEARCH + SCAN BAR ===== */
+        /* ===== SEARCH + FILTER SECTION ===== */
         .search-section {
             margin-bottom: 1.5rem;
         }
@@ -125,6 +125,7 @@
             border: 1px solid rgba(255, 255, 255, 0.7);
             max-width: 500px;
             flex-wrap: wrap;
+            margin-bottom: 0.8rem;
         }
 
         .search-box i {
@@ -201,6 +202,89 @@
 
         .scan-btn i {
             font-size: 1rem;
+        }
+
+        /* ===== FILTER TANGGAL ===== */
+        .filter-section {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .filter-section .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0b2b3f;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .filter-section label i {
+            color: #2a7faa;
+        }
+
+        .filter-section input[type="date"] {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #dce8f2;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            outline: none;
+            background: #f9fcfe;
+            color: #0b2b3f;
+            min-width: 140px;
+        }
+
+        .filter-section input[type="date"]:focus {
+            border-color: #1d5d7a;
+        }
+
+        .filter-section .filter-btn {
+            background: #1d5d7a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-section .filter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .filter-section .reset-filter-btn {
+            background: #eef6fb;
+            color: #1a4b63;
+            border: 1px solid #d2e4f0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-section .reset-filter-btn:active {
+            transform: scale(0.95);
         }
 
         /* ===== SCANNER MODAL ===== */
@@ -463,6 +547,7 @@
             padding: 0.4rem 0.8rem;
             border-radius: 0.8rem;
             margin-top: 0.2rem;
+            flex-wrap: wrap;
         }
 
         .promo-card .promo-dates i {
@@ -612,6 +697,22 @@
                 min-width: 100px;
             }
 
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+
+            .filter-section .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-section input[type="date"] {
+                width: 100%;
+                min-width: unset;
+            }
+
             .promo-grid {
                 grid-template-columns: 1fr;
             }
@@ -728,6 +829,24 @@
                 <button class="search-icon-btn" id="searchBtn"><i class="fas fa-arrow-right"></i> Cari</button>
                 <button class="scan-btn" id="scanBtn"><i class="fas fa-qrcode"></i> Scan</button>
             </div>
+
+            <!-- FILTER TANGGAL -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar-alt"></i> Start Date:</label>
+                    <input type="date" id="startDateFilter">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar-check"></i> End Date:</label>
+                    <input type="date" id="endDateFilter">
+                </div>
+                <button class="filter-btn" id="filterDateBtn">
+                    <i class="fas fa-filter"></i> Filter Tanggal
+                </button>
+                <button class="reset-filter-btn" id="resetFilterBtn">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
         </div>
 
         <!-- LOADING -->
@@ -789,6 +908,9 @@
             let isLoading = false;
             let html5QrCode = null;
             let isScannerOpen = false;
+            let currentSearchKeyword = '';
+            let currentStartDate = '';
+            let currentEndDate = '';
 
             // ===== DOM ELEMENTS =====
             const loadingEl = document.getElementById('loadingIndicator');
@@ -804,6 +926,10 @@
             const closeScanner = document.getElementById('closeScanner');
             const manualBarcode = document.getElementById('manualBarcode');
             const manualBarcodeBtn = document.getElementById('manualBarcodeBtn');
+            const startDateFilter = document.getElementById('startDateFilter');
+            const endDateFilter = document.getElementById('endDateFilter');
+            const filterDateBtn = document.getElementById('filterDateBtn');
+            const resetFilterBtn = document.getElementById('resetFilterBtn');
 
             // ===== AMBIL DATA DARI EXCEL =====
             async function fetchExcelData() {
@@ -837,14 +963,14 @@
                         return null;
                     };
 
-                    const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title']);
+                    const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title', 'description']);
                     const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode']);
                     const categoryKey = mapKey(['kategori', 'category', 'jenis']);
                     const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal']);
                     const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price']);
                     const descKey = mapKey(['deskripsi', 'desc', 'keterangan', 'detail']);
-                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai']);
-                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai']);
+                    const startDateKey = mapKey(['start_date', 'startdate', 'tanggal_mulai', 'mulai', 'tgl_mulai', 'start']);
+                    const endDateKey = mapKey(['end_date', 'enddate', 'tanggal_selesai', 'selesai', 'tgl_selesai', 'end']);
 
                     allPromos = jsonData.map((row, index) => {
                         const nama = nameKey ? (row[nameKey] || 'Promo ' + (index + 1)) : ('Promo ' + (index +
@@ -858,6 +984,9 @@
                         // Format tanggal
                         let startDate = '';
                         let endDate = '';
+                        let startDateObj = null;
+                        let endDateObj = null;
+
                         if (startDateKey && row[startDateKey]) {
                             const rawStart = row[startDateKey];
                             if (typeof rawStart === 'number') {
@@ -868,8 +997,14 @@
                                     month: 'short',
                                     year: 'numeric'
                                 });
+                                startDateObj = dateObj;
                             } else {
                                 startDate = String(rawStart).trim();
+                                // Coba parse tanggal
+                                const parsed = new Date(startDate);
+                                if (!isNaN(parsed)) {
+                                    startDateObj = parsed;
+                                }
                             }
                         }
                         if (endDateKey && row[endDateKey]) {
@@ -881,8 +1016,13 @@
                                     month: 'short',
                                     year: 'numeric'
                                 });
+                                endDateObj = dateObj;
                             } else {
                                 endDate = String(rawEnd).trim();
+                                const parsed = new Date(endDate);
+                                if (!isNaN(parsed)) {
+                                    endDateObj = parsed;
+                                }
                             }
                         }
 
@@ -896,6 +1036,8 @@
                             deskripsi: String(deskripsi).trim(),
                             startDate: startDate,
                             endDate: endDate,
+                            startDateObj: startDateObj,
+                            endDateObj: endDateObj,
                             _raw: row
                         };
                     });
@@ -1070,16 +1212,64 @@
             }
 
             // ===== FILTER =====
-            function applyFilter(keyword, highlightKode = null) {
-                keyword = keyword.toLowerCase().trim();
-                if (!keyword) {
-                    filteredPromos = [...allPromos];
-                } else {
-                    filteredPromos = allPromos.filter(item => {
+            function applyFilters(keyword, startDate, endDate, highlightKode = null) {
+                currentSearchKeyword = keyword || '';
+                currentStartDate = startDate || '';
+                currentEndDate = endDate || '';
+
+                // Mulai dengan semua data
+                let result = [...allPromos];
+
+                // Filter berdasarkan keyword
+                if (keyword && keyword.trim()) {
+                    const search = keyword.toLowerCase().trim();
+                    result = result.filter(item => {
                         const searchText = `${item.nama} ${item.kode} ${item.kategori} ${item.deskripsi}`.toLowerCase();
-                        return searchText.includes(keyword);
+                        return searchText.includes(search);
                     });
                 }
+
+                // Filter berdasarkan start date
+                if (startDate) {
+                    const startFilter = new Date(startDate);
+                    startFilter.setHours(0, 0, 0, 0);
+                    result = result.filter(item => {
+                        if (!item.startDateObj) return false;
+                        const itemDate = new Date(item.startDateObj);
+                        itemDate.setHours(0, 0, 0, 0);
+                        return itemDate >= startFilter;
+                    });
+                }
+
+                // Filter berdasarkan end date
+                if (endDate) {
+                    const endFilter = new Date(endDate);
+                    endFilter.setHours(0, 0, 0, 0);
+                    result = result.filter(item => {
+                        if (!item.endDateObj) return false;
+                        const itemDate = new Date(item.endDateObj);
+                        itemDate.setHours(0, 0, 0, 0);
+                        return itemDate <= endFilter;
+                    });
+                }
+
+                // Filter range: start_date >= startFilter AND end_date <= endFilter
+                if (startDate && endDate) {
+                    const startFilter = new Date(startDate);
+                    startFilter.setHours(0, 0, 0, 0);
+                    const endFilter = new Date(endDate);
+                    endFilter.setHours(0, 0, 0, 0);
+                    result = result.filter(item => {
+                        if (!item.startDateObj || !item.endDateObj) return false;
+                        const itemStart = new Date(item.startDateObj);
+                        itemStart.setHours(0, 0, 0, 0);
+                        const itemEnd = new Date(item.endDateObj);
+                        itemEnd.setHours(0, 0, 0, 0);
+                        return itemStart >= startFilter && itemEnd <= endFilter;
+                    });
+                }
+
+                filteredPromos = result;
                 updateTotalBadge();
                 renderPage(1, highlightKode);
             }
@@ -1151,7 +1341,6 @@
                     filteredPromos = found;
                     updateTotalBadge();
                     renderPage(1, kode);
-                    // Tampilkan notifikasi
                     showToast(`Ditemukan ${found.length} promo untuk kode: ${kode}`);
                 } else {
                     // Coba cari parsial
@@ -1166,9 +1355,7 @@
                     } else {
                         showToast(`Tidak ditemukan promo untuk kode: ${kode}`, 'error');
                         // Reset ke semua data
-                        filteredPromos = [...allPromos];
-                        updateTotalBadge();
-                        renderPage(1);
+                        applyFilters('', '', '');
                     }
                 }
                 // Set input search
@@ -1187,7 +1374,6 @@
                 }
                 isScannerOpen = false;
                 scannerOverlay.classList.remove('active');
-                // Kosongkan reader
                 document.getElementById('reader').innerHTML = '';
             }
 
@@ -1245,14 +1431,21 @@
             };
 
             // ===== EVENT LISTENERS =====
+            // Search
             searchBtn.addEventListener('click', function() {
-                applyFilter(searchInput.value);
+                const keyword = searchInput.value;
+                const startDate = startDateFilter.value;
+                const endDate = endDateFilter.value;
+                applyFilters(keyword, startDate, endDate);
             });
 
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    applyFilter(searchInput.value);
+                    const keyword = searchInput.value;
+                    const startDate = startDateFilter.value;
+                    const endDate = endDateFilter.value;
+                    applyFilters(keyword, startDate, endDate);
                 }
                 if (this.value.length > 0) {
                     clearBtn.classList.add('show');
@@ -1266,18 +1459,39 @@
                     clearBtn.classList.add('show');
                 } else {
                     clearBtn.classList.remove('show');
-                    applyFilter('');
+                    const startDate = startDateFilter.value;
+                    const endDate = endDateFilter.value;
+                    applyFilters('', startDate, endDate);
                 }
             });
 
             clearBtn.addEventListener('click', function() {
                 searchInput.value = '';
                 clearBtn.classList.remove('show');
-                applyFilter('');
+                const startDate = startDateFilter.value;
+                const endDate = endDateFilter.value;
+                applyFilters('', startDate, endDate);
                 searchInput.focus();
             });
 
-            // === SCAN BUTTON ===
+            // Filter Tanggal
+            filterDateBtn.addEventListener('click', function() {
+                const keyword = searchInput.value;
+                const startDate = startDateFilter.value;
+                const endDate = endDateFilter.value;
+                applyFilters(keyword, startDate, endDate);
+            });
+
+            resetFilterBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                startDateFilter.value = '';
+                endDateFilter.value = '';
+                clearBtn.classList.remove('show');
+                applyFilters('', '', '');
+                showToast('Filter tanggal direset');
+            });
+
+            // Scan
             scanBtn.addEventListener('click', function() {
                 startScanner();
             });
@@ -1286,14 +1500,12 @@
                 closeScannerModal();
             });
 
-            // Tutup scanner klik overlay
             scannerOverlay.addEventListener('click', function(e) {
                 if (e.target === scannerOverlay) {
                     closeScannerModal();
                 }
             });
 
-            // Manual barcode
             manualBarcodeBtn.addEventListener('click', function() {
                 const kode = manualBarcode.value.trim();
                 if (kode) {
