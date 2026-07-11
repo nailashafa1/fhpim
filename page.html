@@ -211,6 +211,11 @@
             color: #2a7faa;
         }
 
+        /* Tombol hapus menu cek exp (tersembunyi di UI, hanya fungsi) */
+        .hidden-action {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             body { padding: 0.8rem; }
             .card { padding: 1.2rem; border-radius: 1.5rem; }
@@ -268,7 +273,7 @@
             <span class="tagline"><i class="fas fa-bolt" style="margin-right: 4px;"></i> update harian</span>
         </div>
 
-        <!-- MENU GRID: Cek Harga + Cek Promo + Cek Exp -->
+        <!-- MENU GRID: Cek Harga + Cek Promo + (Cek Exp dihapus) -->
         <div class="menu-grid">
             <!-- Cek Harga mengarah ke scan.html -->
             <a href="scan.html" class="menu-item">
@@ -277,8 +282,8 @@
                         <i class="fas fa-search-dollar"></i>
                     </div>
                     <div class="info">
-                        <h3>Cek Harga</h3>
-                        <p>Scan barcode · real-time</p>
+                        <h3>Cek Stock</h3>
+                        <p>Menu Untuk Cek Stock </p>
                     </div>
                 </div>
                 <div class="badge">
@@ -302,21 +307,8 @@
                 </div>
             </a>
 
-            <!-- Cek Exp mengarah ke exp.html -->
-            <a href="exp.html" class="menu-item">
-                <div class="left">
-                    <div class="icon-circle" style="background: #fce8e6; color: #c0392b;">
-                        <i class="fas fa-calendar-times"></i>
-                    </div>
-                    <div class="info">
-                        <h3>Cek Exp</h3>
-                        <p>Kadaluarsa · tanggal</p>
-                    </div>
-                </div>
-                <div class="badge" style="background: #fce8e6; color: #c0392b; border-color: #f5d0cc;">
-                    <i class="fas fa-arrow-right" style="margin-right: 4px;"></i> cek
-                </div>
-            </a>
+            <!-- Cek Exp dihapus (tidak tampil) -->
+            <!-- Hanya dua menu yang tersisa -->
         </div>
 
         <!-- FEATURED SECTION: Info Scan -->
@@ -339,8 +331,8 @@
 
     <script>
         // Tidak ada script khusus untuk halaman utama
-        // Semua fungsi scan dan daftar sudah dipindah ke scan.html
-        console.log('FHPIM - Halaman Utama');
+        // Menu "Cek Exp" telah dihapus dari tampilan
+        console.log('FHPIM - Halaman Utama (menu cek exp dihapus)');
     </script>
 </body>
 </html>
