@@ -72,7 +72,7 @@
 
         .menu-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1.8rem;
         }
@@ -215,7 +215,10 @@
             body { padding: 0.8rem; }
             .card { padding: 1.2rem; border-radius: 1.5rem; }
             .brand h1 { font-size: 1.4rem; }
-            .menu-grid { gap: 0.8rem; }
+            .menu-grid { 
+                grid-template-columns: 1fr 1fr; 
+                gap: 0.8rem; 
+            }
             .menu-item { padding: 0.9rem 0.8rem; min-height: 70px; border-radius: 1.2rem; }
             .menu-item .icon-circle { width: 42px; height: 42px; min-width: 42px; font-size: 1.2rem; }
             .menu-item .info h3 { font-size: 0.95rem; }
@@ -230,7 +233,11 @@
             .brand h1 { font-size: 1.2rem; }
             .brand h1 i { font-size: 1rem; padding: 0.2rem 0.4rem; }
             .brand .tagline { font-size: 0.65rem; padding: 0.25rem 0.7rem; }
-            .menu-grid { gap: 0.6rem; margin-bottom: 1.2rem; }
+            .menu-grid { 
+                grid-template-columns: 1fr 1fr; 
+                gap: 0.6rem; 
+                margin-bottom: 1.2rem; 
+            }
             .menu-item { padding: 0.7rem 0.6rem; min-height: 60px; border-radius: 1rem; }
             .menu-item .left { gap: 0.5rem; }
             .menu-item .icon-circle { width: 36px; height: 36px; min-width: 36px; font-size: 1rem; border-radius: 25px; }
@@ -261,7 +268,7 @@
             <span class="tagline"><i class="fas fa-bolt" style="margin-right: 4px;"></i> update harian</span>
         </div>
 
-        <!-- MENU GRID: Cek Harga + Cek Promo -->
+        <!-- MENU GRID: Cek Harga + Cek Promo + Cek Exp -->
         <div class="menu-grid">
             <!-- Cek Harga mengarah ke scan.html -->
             <a href="scan.html" class="menu-item">
@@ -294,13 +301,29 @@
                     <i class="fas fa-arrow-right" style="margin-right: 4px;"></i> lihat
                 </div>
             </a>
+
+            <!-- Cek Exp mengarah ke exp.html -->
+            <a href="exp.html" class="menu-item">
+                <div class="left">
+                    <div class="icon-circle" style="background: #fce8e6; color: #c0392b;">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="info">
+                        <h3>Cek Exp</h3>
+                        <p>Kadaluarsa · tanggal</p>
+                    </div>
+                </div>
+                <div class="badge" style="background: #fce8e6; color: #c0392b; border-color: #f5d0cc;">
+                    <i class="fas fa-arrow-right" style="margin-right: 4px;"></i> cek
+                </div>
+            </a>
         </div>
 
         <!-- FEATURED SECTION: Info Scan -->
         <div class="featured-section">
             <div class="text">
                 <h3><i class="fas fa-camera"></i> Scan Barcode</h3>
-                <p>Scan barcode produk untuk cek harga dan promo terbaru</p>
+                <p>Scan barcode produk untuk membuat SL dan SL Promo</p>
             </div>
             <a href="scan.html" class="btn-featured">
                 <i class="fas fa-camera"></i> Mulai Scan
