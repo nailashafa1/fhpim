@@ -866,8 +866,8 @@
 
                 const vendorKey = mapKey(['vendor', 'supplier', 'vendorname', 'nama_vendor']);
                 const eanKey = mapKey(['ean', 'barcode', 'upc', 'code', 'kode']);
-                const descKey = mapKey(['description', 'desc', 'product', 'item', 'name', 'deskripsi', 'nama']);
-                const sohKey = mapKey(['soh', 'stock', 'qty', 'quantity', 'onhand', 'jumlah']);
+                const descKey = mapKey(['description', 'desc', 'product', 'item', 'name', 'Deskripsi', 'nama']);
+                const sohKey = mapKey(['soh','SOH', 'stock', 'qty', 'quantity', 'onhand', 'jumlah']);
 
                 const result = jsonData.map((row, index) => {
                     const vendor = vendorKey ? String(row[vendorKey] || '').trim() : '';
