@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>📦 Stock FHPIM</title>
-    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- SheetJS untuk baca Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- html5-qrcode untuk scan barcode -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         * {
@@ -432,7 +429,7 @@
             margin-bottom: 0.3rem;
         }
 
-        /* ===== SCANNER MODAL DENGAN ZOOM ===== */
+        /* ===== SCANNER MODAL ===== */
         .scanner-overlay {
             display: none;
             position: fixed;
@@ -523,7 +520,45 @@
             object-fit: cover;
         }
 
-        /* ===== TOMBOL ZOOM ===== */
+        /* ===== TIPS UNTUK HP JADUL ===== */
+        .scanner-tips {
+            background: #fff3cd;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .scanner-tips i {
+            font-size: 1.2rem;
+            margin-top: 0.1rem;
+            color: #f39c12;
+        }
+
+        .scanner-tips .tips-content {
+            flex: 1;
+        }
+
+        .scanner-tips .tips-content strong {
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .scanner-tips .tips-content ul {
+            margin: 0.2rem 0 0 1rem;
+            padding: 0;
+        }
+
+        .scanner-tips .tips-content ul li {
+            margin-bottom: 0.1rem;
+        }
+
+        /* ===== ZOOM CONTROLS ===== */
         .zoom-controls {
             display: flex;
             justify-content: center;
@@ -545,6 +580,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            min-width: 60px;
+            justify-content: center;
         }
 
         .zoom-controls button:active {
@@ -573,30 +610,6 @@
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
-        }
-
-        /* ===== TOMBOL FLASHLIGHT ===== */
-        .flashlight-btn {
-            background: #f39c12;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 1.2rem;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .flashlight-btn.active {
-            background: #2ecc71;
-        }
-
-        .flashlight-btn:active {
-            transform: scale(0.95);
         }
 
         .scanner-status {
@@ -645,6 +658,30 @@
         }
 
         .manual-input-row button:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== TOMBOL BANTUAN SCAN ===== */
+        .scan-help-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .scan-help-buttons button {
+            background: #e8f0fe;
+            border: 1px solid #d0dce8;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            color: #1d5d7a;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .scan-help-buttons button:active {
             transform: scale(0.95);
         }
 
@@ -725,6 +762,7 @@
             .zoom-controls button {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.7rem;
+                min-width: 50px;
             }
         }
 
@@ -863,7 +901,7 @@
         </div>
     </div>
 
-    <!-- ===== SCANNER MODAL DENGAN ZOOM ===== -->
+    <!-- ===== SCANNER MODAL ===== -->
     <div class="scanner-overlay" id="scannerOverlay">
         <div class="scanner-box">
             <div class="scanner-header">
@@ -872,21 +910,44 @@
             </div>
             <div id="reader"></div>
             
-            <!-- ===== KONTROL ZOOM & FLASHLIGHT ===== -->
+            <!-- ===== TIPS UNTUK HP JADUL ===== -->
+            <div class="scanner-tips">
+                <i class="fas fa-lightbulb"></i>
+                <div class="tips-content">
+                    <strong>📱 Tips untuk HP kamera kurang bagus:</strong>
+                    <ul>
+                        <li>Jarakkan HP <strong>10-20 cm</strong> dari barcode</li>
+                        <li>Gunakan <strong>tombol +</strong> untuk zoom</li>
+                        <li>Pastikan <strong>cahaya cukup</strong> (nyalakan lampu)</li>
+                        <li>Jika gagal, <strong>ketik manual</strong> di bawah</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ===== ZOOM CONTROLS ===== -->
             <div class="zoom-controls">
                 <button class="zoom-out" id="zoomOutBtn"><i class="fas fa-search-minus"></i> -</button>
                 <span class="zoom-level" id="zoomLevelDisplay"><i class="fas fa-search"></i> 1.0x</span>
                 <button class="zoom-in" id="zoomInBtn"><i class="fas fa-search-plus"></i> +</button>
-                <button class="flashlight-btn" id="flashlightBtn"><i class="fas fa-lightbulb"></i> Lampu</button>
+                <button class="zoom-reset" id="zoomResetBtn"><i class="fas fa-undo"></i> Reset</button>
             </div>
 
             <div class="scanner-status" id="scannerStatus">
-                <i class="fas fa-camera"></i> Arahkan ke barcode (pakai zoom jika perlu)
+                <i class="fas fa-camera"></i> Arahkan ke barcode
             </div>
 
+            <!-- ===== INPUT MANUAL ===== -->
             <div class="manual-input-row">
-                <input type="text" id="manualBarcode" placeholder="Atau ketik EAN manual...">
+                <input type="text" id="manualBarcode" placeholder="Ketik EAN manual disini...">
                 <button id="manualBarcodeBtn"><i class="fas fa-arrow-right"></i> Cari</button>
+            </div>
+
+            <!-- ===== TOMBOL BANTUAN ===== -->
+            <div class="scan-help-buttons">
+                <button onclick="setManualBarcode('8991002100365')">📦 Indomie</button>
+                <button onclick="setManualBarcode('8992750401995')">🥤 Teh Botol</button>
+                <button onclick="setManualBarcode('8993177178064')">🍪 Oreo</button>
+                <button onclick="setManualBarcode('8996001300554')">🥛 Ultra Milk</button>
             </div>
         </div>
     </div>
@@ -908,7 +969,7 @@
             let currentSearchKeyword = '';
             let scanTimeout = null;
             let currentZoom = 1.0;
-            let isFlashlightOn = false;
+            let scanAttempts = 0;
 
             // ===== DOM ELEMENTS =====
             const loadingEl = document.getElementById('loadingIndicator');
@@ -932,8 +993,8 @@
             const scannerStatus = document.getElementById('scannerStatus');
             const zoomInBtn = document.getElementById('zoomInBtn');
             const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const zoomResetBtn = document.getElementById('zoomResetBtn');
             const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
-            const flashlightBtn = document.getElementById('flashlightBtn');
 
             // ===== PROSES DATA EXCEL =====
             function processExcelData(jsonData) {
@@ -1043,8 +1104,6 @@
                             highlighted.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }, 300);
                     }
-                } else {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
 
@@ -1121,7 +1180,7 @@
                 renderPage(1, highlightEAN);
             }
 
-            // ===== SCAN BARCODE DENGAN ZOOM =====
+            // ===== SCAN BARCODE =====
             function startScanner() {
                 if (isScannerOpen) return;
                 isScannerOpen = true;
@@ -1129,9 +1188,11 @@
                 scannerStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengakses kamera...';
                 currentZoom = 1.0;
                 updateZoomDisplay();
+                scanAttempts = 0;
 
+                // Cek dukungan kamera
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Perangkat tidak mendukung kamera. Silakan input manual.';
+                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Kamera tidak didukung. Silakan input manual.';
                     return;
                 }
 
@@ -1139,47 +1200,47 @@
                 readerElement.innerHTML = '';
 
                 try {
+                    // Konfigurasi lebih ringan untuk HP jadul
                     const config = {
-                        fps: 20,
-                        qrbox: { width: 320, height: 240 },
+                        fps: 10, // Turunkan FPS untuk HP jadul
+                        qrbox: { width: 280, height: 200 },
                         aspectRatio: 1.0,
                         formatsToSupport: [
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.CODE_39,
-                            Html5QrcodeSupportedFormats.CODE_93,
                             Html5QrcodeSupportedFormats.EAN_13,
                             Html5QrcodeSupportedFormats.EAN_8,
                             Html5QrcodeSupportedFormats.UPC_A,
                             Html5QrcodeSupportedFormats.UPC_E,
-                            Html5QrcodeSupportedFormats.QR_CODE,
-                            Html5QrcodeSupportedFormats.DATA_MATRIX,
-                            Html5QrcodeSupportedFormats.ITF,
-                            Html5QrcodeSupportedFormats.CODABAR
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39
                         ],
-                        rememberLastUsedCamera: true,
-                        supportedScanTypes: [
-                            Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                            Html5QrcodeScanType.SCAN_TYPE_FILE
-                        ]
+                        rememberLastUsedCamera: true
                     };
 
                     html5QrCode = new Html5Qrcode("reader");
 
-                    html5QrCode.start({ facingMode: "environment" },
+                    // Coba kamera belakang dengan resolusi rendah untuk performa lebih baik
+                    const constraints = {
+                        facingMode: "environment",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    };
+
+                    html5QrCode.start(constraints,
                         config,
                         onScanSuccess,
                         onScanError
                     ).then(() => {
-                        scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Arahkan ke barcode (pakai zoom jika perlu)';
+                        scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Arahkan ke barcode (jarak 10-20cm)';
                     }).catch((err) => {
                         console.error('Error starting scanner:', err);
                         scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Gagal akses kamera: ' + err.message;
+                        // Coba dengan kamera default
                         setTimeout(() => {
                             try {
-                                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanError);
-                                scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Menggunakan kamera depan';
+                                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanError);
+                                scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Coba lagi...';
                             } catch (e2) {
-                                scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal akses kamera. Silakan input manual.';
+                                scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal akses kamera. Input manual.';
                             }
                         }, 1000);
                     });
@@ -1189,33 +1250,25 @@
                 }
             }
 
-            // ===== FUNGSI ZOOM =====
+            // ===== ZOOM FUNCTIONS =====
             function updateZoomDisplay() {
                 zoomLevelDisplay.innerHTML = `<i class="fas fa-search"></i> ${currentZoom.toFixed(1)}x`;
             }
 
             function applyZoom() {
-                if (!html5QrCode) return;
-                try {
-                    // html5-qrcode tidak punya API zoom langsung, 
-                    // tapi kita bisa memberitahu user untuk menggunakan pinch zoom
-                    // Atau kita bisa menggunakan CSS transform pada video
-                    const videoElement = document.querySelector('#reader video');
-                    if (videoElement) {
-                        videoElement.style.transform = `scale(${currentZoom})`;
-                        videoElement.style.transformOrigin = 'center center';
-                    }
-                    updateZoomDisplay();
-                } catch (e) {
-                    console.warn('Zoom not supported:', e);
+                const videoElement = document.querySelector('#reader video');
+                if (videoElement) {
+                    videoElement.style.transform = `scale(${currentZoom})`;
+                    videoElement.style.transformOrigin = 'center center';
                 }
+                updateZoomDisplay();
             }
 
             function zoomIn() {
                 if (currentZoom < 3.0) {
                     currentZoom = Math.min(3.0, currentZoom + 0.2);
                     applyZoom();
-                    scannerStatus.innerHTML = '<i class="fas fa-search-plus"></i> Zoom: ' + currentZoom.toFixed(1) + 'x (gunakan untuk barcode kecil)';
+                    scannerStatus.innerHTML = '<i class="fas fa-search-plus"></i> Zoom: ' + currentZoom.toFixed(1) + 'x';
                 }
             }
 
@@ -1233,39 +1286,13 @@
                 scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Zoom reset ke 1.0x';
             }
 
-            // ===== FUNGSI FLASHLIGHT =====
-            function toggleFlashlight() {
-                if (!html5QrCode) return;
-                try {
-                    isFlashlightOn = !isFlashlightOn;
-                    // Coba gunakan flashlight API jika tersedia
-                    const track = html5QrCode.getCameraStream()?.getVideoTracks?.[0];
-                    if (track && track.applyConstraints) {
-                        track.applyConstraints({
-                            advanced: [{ torch: isFlashlightOn }]
-                        }).then(() => {
-                            flashlightBtn.classList.toggle('active', isFlashlightOn);
-                            flashlightBtn.innerHTML = isFlashlightOn ? 
-                                '<i class="fas fa-lightbulb"></i> Lampu ON' : 
-                                '<i class="fas fa-lightbulb"></i> Lampu';
-                            scannerStatus.innerHTML = isFlashlightOn ? 
-                                '<i class="fas fa-lightbulb" style="color:#f39c12;"></i> Lampu menyala' : 
-                                '<i class="fas fa-camera"></i> Lampu mati';
-                        }).catch(() => {
-                            // Fallback: beri tahu user
-                            scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak didukung perangkat ini';
-                            isFlashlightOn = false;
-                        });
-                    } else {
-                        scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak tersedia';
-                        isFlashlightOn = false;
-                    }
-                } catch (e) {
-                    console.warn('Flashlight error:', e);
-                    scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak tersedia';
-                    isFlashlightOn = false;
-                }
-            }
+            // ===== SET MANUAL BARCODE =====
+            window.setManualBarcode = function(ean) {
+                manualBarcode.value = ean;
+                // Langsung cari
+                closeScannerModal();
+                searchByEAN(ean);
+            };
 
             // ===== SCAN SUCCESS =====
             function onScanSuccess(decodedText, decodedResult) {
@@ -1279,10 +1306,11 @@
                 closeScannerModal();
 
                 let ean = decodedText.trim();
+                // Bersihkan karakter
                 ean = ean.replace(/[^0-9]/g, '');
                 
                 if (!ean) {
-                    showToast('Barcode tidak terbaca, silakan coba lagi', 'error');
+                    showToast('Barcode tidak terbaca, coba lagi', 'error');
                     return;
                 }
                 
@@ -1290,7 +1318,12 @@
             }
 
             function onScanError(err) {
-                // Normal scanning error - ignore
+                // Abaikan error scanning normal
+                scanAttempts++;
+                // Jika terlalu banyak percobaan, beri saran
+                if (scanAttempts > 30) {
+                    scannerStatus.innerHTML = '<i class="fas fa-clock"></i> Coba input manual atau atur jarak';
+                }
             }
 
             // ===== SEARCH BY EAN =====
@@ -1316,7 +1349,7 @@
                         renderPage(1);
                         showToast(`🔍 Ditemukan ${partial.length} item dengan EAN mengandung: ${ean}`);
                     } else {
-                        showToast(`❌ Tidak ditemukan item untuk EAN: ${ean}`, 'error');
+                        showToast(`❌ Tidak ditemukan untuk EAN: ${ean}`, 'error');
                         applyFilters('', '');
                     }
                 }
@@ -1329,19 +1362,6 @@
                 if (scanTimeout) {
                     clearTimeout(scanTimeout);
                     scanTimeout = null;
-                }
-                
-                // Matikan flashlight
-                if (isFlashlightOn) {
-                    try {
-                        const track = html5QrCode?.getCameraStream()?.getVideoTracks?.[0];
-                        if (track) {
-                            track.applyConstraints({ advanced: [{ torch: false }] });
-                        }
-                    } catch (e) {}
-                    isFlashlightOn = false;
-                    flashlightBtn.classList.remove('active');
-                    flashlightBtn.innerHTML = '<i class="fas fa-lightbulb"></i> Lampu';
                 }
 
                 if (html5QrCode) {
@@ -1356,7 +1376,6 @@
                 scannerOverlay.classList.remove('active');
                 document.getElementById('reader').innerHTML = '';
                 
-                // Reset zoom
                 currentZoom = 1.0;
                 updateZoomDisplay();
             }
@@ -1513,26 +1532,13 @@
             // ===== ZOOM EVENTS =====
             zoomInBtn.addEventListener('click', zoomIn);
             zoomOutBtn.addEventListener('click', zoomOut);
-            
+            zoomResetBtn.addEventListener('click', resetZoom);
+
             // Double click untuk reset zoom
             document.getElementById('reader').addEventListener('dblclick', resetZoom);
 
-            // ===== FLASHLIGHT =====
-            flashlightBtn.addEventListener('click', toggleFlashlight);
-
-            closeScanner.addEventListener('click', closeScannerModal);
-
-            scannerOverlay.addEventListener('click', function(e) {
-                if (e.target === scannerOverlay) {
-                    closeScannerModal();
-                }
-            });
-
+            // Keyboard shortcut untuk zoom
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isScannerOpen) {
-                    closeScannerModal();
-                }
-                // Keyboard shortcut: +/- untuk zoom
                 if (isScannerOpen) {
                     if (e.key === '+' || e.key === '=') {
                         e.preventDefault();
@@ -1540,7 +1546,20 @@
                     } else if (e.key === '-') {
                         e.preventDefault();
                         zoomOut();
+                    } else if (e.key === 'r' || e.key === 'R') {
+                        resetZoom();
                     }
+                }
+                if (e.key === 'Escape' && isScannerOpen) {
+                    closeScannerModal();
+                }
+            });
+
+            closeScanner.addEventListener('click', closeScannerModal);
+
+            scannerOverlay.addEventListener('click', function(e) {
+                if (e.target === scannerOverlay) {
+                    closeScannerModal();
                 }
             });
 
