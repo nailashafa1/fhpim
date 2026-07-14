@@ -803,7 +803,7 @@
                 <button class="close-scanner" id="closeScanner"><i class="fas fa-times"></i></button>
             </div>
             <div id="reader"></div>
-            <div class="scanner-status" id="scannerStatus">
+            <div class="scanner-status">
                 <i class="fas fa-camera"></i> Arahkan kamera ke barcode EAN
             </div>
             <div class="manual-input-row">
@@ -828,7 +828,6 @@
             let html5QrCode = null;
             let isScannerOpen = false;
             let currentSearchKeyword = '';
-            let scanTimeout = null;
 
             // ===== DOM ELEMENTS =====
             const loadingEl = document.getElementById('loadingIndicator');
@@ -849,7 +848,6 @@
             const fileInput = document.getElementById('fileInput');
             const fileStatus = document.getElementById('fileStatus');
             const loadOnlineBtn = document.getElementById('loadOnlineBtn');
-            const scannerStatus = document.getElementById('scannerStatus');
 
             // ===== PROSES DATA EXCEL =====
             function processExcelData(jsonData) {
@@ -1043,11 +1041,9 @@
                 if (isScannerOpen) return;
                 isScannerOpen = true;
                 scannerOverlay.classList.add('active');
-                scannerStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengakses kamera...';
 
-                // Cek dukungan kamera
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Perangkat tidak mendukung kamera. Silakan input manual.';
+                    alert('Perangkat tidak mendukung akses kamera. Silakan input EAN manual.');
                     return;
                 }
 
@@ -1055,117 +1051,53 @@
                 readerElement.innerHTML = '';
 
                 try {
-                    // Konfigurasi yang lebih fleksibel untuk berbagai jenis barcode
-                    const config = {
-                        fps: 20, // Meningkatkan FPS untuk scanning lebih cepat
-                        qrbox: { width: 300, height: 200 }, // Area scan lebih lebar
-                        aspectRatio: 1.0,
-                        formatsToSupport: [
-                            // Mendukung berbagai format barcode
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.CODE_39,
-                            Html5QrcodeSupportedFormats.CODE_93,
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E,
-                            Html5QrcodeSupportedFormats.QR_CODE,
-                            Html5QrcodeSupportedFormats.DATA_MATRIX,
-                            Html5QrcodeSupportedFormats.ITF,
-                            Html5QrcodeSupportedFormats.CODABAR
-                        ],
-                        rememberLastUsedCamera: true,
-                        supportedScanTypes: [
-                            Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                            Html5QrcodeScanType.SCAN_TYPE_FILE
-                        ]
-                    };
-
                     html5QrCode = new Html5Qrcode("reader");
 
-                    // Coba gunakan kamera belakang, jika gagal gunakan default
-                    const cameraConfig = { facingMode: "environment" };
-                    
-                    // Timeout untuk scanning jika terlalu lama
-                    if (scanTimeout) clearTimeout(scanTimeout);
-                    scanTimeout = setTimeout(() => {
-                        scannerStatus.innerHTML = '<i class="fas fa-clock"></i> Scan memakan waktu lama. Pastikan barcode jelas dan pencahayaan cukup.';
-                    }, 10000);
+                    const config = {
+                        fps: 15,
+                        qrbox: { width: 250, height: 250 },
+                        aspectRatio: 1.0
+                    };
 
-                    html5QrCode.start(cameraConfig,
+                    html5QrCode.start({ facingMode: "environment" },
                         config,
                         onScanSuccess,
                         onScanError
-                    ).then(() => {
-                        scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Arahkan kamera ke barcode EAN';
-                    }).catch((err) => {
-                        console.error('Error starting scanner:', err);
-                        scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Gagal akses kamera: ' + err.message;
-                        // Coba dengan kamera default
-                        setTimeout(() => {
-                            try {
-                                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanError);
-                                scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Menggunakan kamera depan';
-                            } catch (e2) {
-                                scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal akses kamera. Silakan input manual.';
-                            }
-                        }, 1000);
-                    });
+                    );
                 } catch (err) {
                     console.error('Gagal start scanner:', err);
-                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Error: ' + err.message;
                     alert('Gagal mengakses kamera. Silakan input EAN manual.');
+                    closeScannerModal();
                 }
             }
 
             function onScanSuccess(decodedText, decodedResult) {
-                // Hentikan scanner setelah berhasil scan
                 if (html5QrCode) {
                     html5QrCode.stop().then(() => {
                         html5QrCode.clear();
                     }).catch(err => console.warn('Stop scanner error:', err));
                 }
-                
-                if (scanTimeout) clearTimeout(scanTimeout);
                 closeScannerModal();
 
-                // Bersihkan hasil scan dari karakter aneh
-                let ean = decodedText.trim();
-                // Hanya ambil angka untuk EAN (bisa juga huruf untuk beberapa format)
-                // Tapi untuk EAN biasanya angka semua
-                ean = ean.replace(/[^0-9]/g, '');
-                
-                if (!ean) {
-                    showToast('Barcode tidak terbaca, silakan coba lagi', 'error');
-                    return;
-                }
-                
+                const ean = decodedText.trim();
                 searchByEAN(ean);
             }
 
-            function onScanError(err) {
-                // Error handling untuk scan - tidak perlu ditampilkan ke user
-                // karena ini terjadi terus menerus saat scanning
-                if (err && err.includes && err.includes('NotFoundException')) {
-                    // Ini normal, barcode tidak terlihat
-                }
-            }
+            function onScanError(err) {}
 
             function searchByEAN(ean) {
                 if (!ean) {
-                    showToast('EAN kosong!', 'error');
+                    alert('EAN kosong!');
                     return;
                 }
 
-                // Cari EAN yang sama persis
                 const found = allStocks.filter(item => item.ean === ean);
                 if (found.length > 0) {
                     filteredStocks = found;
                     updateTotalBadge();
                     renderPage(1, ean);
-                    showToast(`✅ Ditemukan ${found.length} item untuk EAN: ${ean}`);
+                    showToast(`Ditemukan ${found.length} item untuk EAN: ${ean}`);
                 } else {
-                    // Cari EAN yang mengandung (partial match)
                     const partial = allStocks.filter(item =>
                         item.ean.toLowerCase().includes(ean.toLowerCase())
                     );
@@ -1173,9 +1105,9 @@
                         filteredStocks = partial;
                         updateTotalBadge();
                         renderPage(1);
-                        showToast(`🔍 Ditemukan ${partial.length} item dengan EAN mengandung: ${ean}`);
+                        showToast(`Ditemukan ${partial.length} item dengan EAN mengandung: ${ean}`);
                     } else {
-                        showToast(`❌ Tidak ditemukan item untuk EAN: ${ean}`, 'error');
+                        showToast(`Tidak ditemukan item untuk EAN: ${ean}`, 'error');
                         applyFilters('', '');
                     }
                 }
@@ -1184,11 +1116,6 @@
             }
 
             function closeScannerModal() {
-                if (scanTimeout) {
-                    clearTimeout(scanTimeout);
-                    scanTimeout = null;
-                }
-                
                 if (html5QrCode) {
                     try {
                         html5QrCode.stop().then(() => {
@@ -1204,12 +1131,7 @@
 
             // ===== TOAST =====
             function showToast(message, type = 'success') {
-                // Hapus toast sebelumnya
-                const oldToast = document.querySelector('.custom-toast');
-                if (oldToast) oldToast.remove();
-
                 const toast = document.createElement('div');
-                toast.className = 'custom-toast';
                 toast.style.cssText = `
                     position: fixed;
                     bottom: 2rem;
@@ -1234,7 +1156,7 @@
                     toast.style.opacity = '0';
                     toast.style.transition = 'opacity 0.4s';
                     setTimeout(() => toast.remove(), 400);
-                }, 3500);
+                }, 3000);
             }
 
             // ===== HELPER =====
@@ -1289,13 +1211,13 @@
                     }
 
                     loadData(processedData, 'Data dari GitHub (stock.xlsx)');
-                    showToast(`✅ Berhasil memuat ${processedData.length} item stock`);
+                    showToast(`Berhasil memuat ${processedData.length} item stock`);
 
                 } catch (error) {
                     console.error('Error loading from GitHub:', error);
                     loadingEl.style.display = 'none';
                     fileStatus.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal muat dari GitHub: ${error.message}`;
-                    showToast('❌ Gagal memuat data: ' + error.message, 'error');
+                    showToast('Gagal memuat data: ' + error.message, 'error');
 
                     emptyState.style.display = 'block';
                     emptyState.innerHTML = `
@@ -1369,20 +1291,13 @@
                 }
             });
 
-            // Keyboard shortcut - ESC untuk tutup scanner
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isScannerOpen) {
-                    closeScannerModal();
-                }
-            });
-
             manualBarcodeBtn.addEventListener('click', function() {
                 const ean = manualBarcode.value.trim();
                 if (ean) {
                     closeScannerModal();
                     searchByEAN(ean);
                 } else {
-                    showToast('Masukkan EAN terlebih dahulu!', 'error');
+                    alert('Masukkan EAN!');
                 }
             });
 
@@ -1417,7 +1332,7 @@
                         }
 
                         loadData(processedData, `File: ${file.name}`);
-                        showToast(`✅ Berhasil memuat ${processedData.length} item dari ${file.name}`);
+                        showToast(`Berhasil memuat ${processedData.length} item dari ${file.name}`);
                     } catch (error) {
                         console.error('Error reading file:', error);
                         showToast('Gagal membaca file: ' + error.message, 'error');
@@ -1440,7 +1355,6 @@
                         }).catch(() => {});
                     } catch (e) {}
                 }
-                if (scanTimeout) clearTimeout(scanTimeout);
             });
 
         })();
