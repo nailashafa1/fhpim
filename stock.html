@@ -29,7 +29,6 @@
             margin: 0 auto;
         }
 
-        /* HEADER */
         .header {
             display: flex;
             align-items: center;
@@ -86,7 +85,6 @@
             font-weight: 600;
         }
 
-        /* UPLOAD SECTION */
         .upload-section {
             background: white;
             border-radius: 1.5rem;
@@ -170,7 +168,6 @@
             cursor: not-allowed;
         }
 
-        /* SEARCH + SCAN */
         .search-section {
             margin-bottom: 1.5rem;
         }
@@ -264,7 +261,6 @@
             font-size: 1rem;
         }
 
-        /* LOADING */
         .loading {
             text-align: center;
             padding: 3rem;
@@ -283,7 +279,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* STOCK TABLE */
         .table-wrapper {
             background: white;
             border-radius: 1.5rem;
@@ -376,7 +371,6 @@
             text-overflow: ellipsis;
         }
 
-        /* PAGINATION */
         .pagination {
             display: flex;
             justify-content: center;
@@ -420,7 +414,6 @@
             color: #4b718a;
         }
 
-        /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -439,7 +432,7 @@
             margin-bottom: 0.3rem;
         }
 
-        /* SCANNER MODAL */
+        /* ===== SCANNER MODAL DENGAN ZOOM ===== */
         .scanner-overlay {
             display: none;
             position: fixed;
@@ -447,7 +440,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             z-index: 1000;
@@ -520,15 +513,95 @@
             border-radius: 1rem;
             overflow: hidden;
             background: #1a1a2e;
+            position: relative;
         }
 
         #reader video {
             border-radius: 1rem;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== TOMBOL ZOOM ===== */
+        .zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .zoom-controls button {
+            background: #1d5d7a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .zoom-controls button:active {
+            transform: scale(0.95);
+        }
+
+        .zoom-controls button.zoom-in {
+            background: #27ae60;
+        }
+
+        .zoom-controls button.zoom-out {
+            background: #e67e22;
+        }
+
+        .zoom-controls button.zoom-reset {
+            background: #1d5d7a;
+        }
+
+        .zoom-controls .zoom-level {
+            background: #f0f4f8;
+            color: #0b2b3f;
+            padding: 0.4rem 1rem;
+            border-radius: 1.2rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* ===== TOMBOL FLASHLIGHT ===== */
+        .flashlight-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .flashlight-btn.active {
+            background: #2ecc71;
+        }
+
+        .flashlight-btn:active {
+            transform: scale(0.95);
         }
 
         .scanner-status {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             font-size: 0.85rem;
             color: #4b718a;
         }
@@ -541,7 +614,7 @@
         .manual-input-row {
             display: flex;
             gap: 0.5rem;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             align-items: center;
         }
 
@@ -575,7 +648,6 @@
             transform: scale(0.95);
         }
 
-        /* FOOTER */
         .footer-note {
             margin-top: 1.5rem;
             text-align: center;
@@ -599,7 +671,6 @@
             color: #2a7faa;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem 1.2rem;
@@ -649,6 +720,11 @@
             .scanner-box {
                 padding: 1rem;
                 margin: 0.5rem;
+            }
+
+            .zoom-controls button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
             }
         }
 
@@ -715,7 +791,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <div class="header-left">
                 <a href="page.html" class="back-btn">
@@ -730,7 +805,6 @@
             </div>
         </div>
 
-        <!-- UPLOAD SECTION -->
         <div class="upload-section">
             <button class="load-online-btn" id="loadOnlineBtn">
                 <i class="fas fa-cloud-download-alt"></i> Muat dari GitHub
@@ -744,7 +818,6 @@
             </span>
         </div>
 
-        <!-- SEARCH + SCAN -->
         <div class="search-section">
             <div class="search-box">
                 <i class="fas fa-search"></i>
@@ -755,13 +828,11 @@
             </div>
         </div>
 
-        <!-- LOADING -->
         <div id="loadingIndicator" class="loading" style="display:none;">
             <i class="fas fa-spinner"></i>
             <p id="loadingText">Memuat data stock...</p>
         </div>
 
-        <!-- TABLE -->
         <div id="tableWrapper" class="table-wrapper" style="display:none;">
             <table class="stock-table" id="stockTable">
                 <thead>
@@ -777,17 +848,14 @@
             </table>
         </div>
 
-        <!-- PAGINATION -->
         <div id="paginationContainer" class="pagination" style="display:none;"></div>
 
-        <!-- EMPTY STATE -->
         <div id="emptyState" class="empty-state" style="display:none;">
             <i class="fas fa-inbox"></i>
             <h3>Tidak ada data stock</h3>
             <p>Muat data dari GitHub atau upload file Excel</p>
         </div>
 
-        <!-- FOOTER -->
         <div class="footer-note">
             <span><i class="fas fa-barcode"></i> Scan barcode EAN</span>
             <span><i class="fas fa-database"></i> Data dari stock.xlsx</span>
@@ -795,17 +863,27 @@
         </div>
     </div>
 
-    <!-- ===== SCANNER MODAL ===== -->
+    <!-- ===== SCANNER MODAL DENGAN ZOOM ===== -->
     <div class="scanner-overlay" id="scannerOverlay">
         <div class="scanner-box">
             <div class="scanner-header">
-                <h3><i class="fas fa-qrcode"></i> Scan Barcode EAN</h3>
+                <h3><i class="fas fa-qrcode"></i> Scan Barcode</h3>
                 <button class="close-scanner" id="closeScanner"><i class="fas fa-times"></i></button>
             </div>
             <div id="reader"></div>
-            <div class="scanner-status">
-                <i class="fas fa-camera"></i> Arahkan kamera ke barcode EAN
+            
+            <!-- ===== KONTROL ZOOM & FLASHLIGHT ===== -->
+            <div class="zoom-controls">
+                <button class="zoom-out" id="zoomOutBtn"><i class="fas fa-search-minus"></i> -</button>
+                <span class="zoom-level" id="zoomLevelDisplay"><i class="fas fa-search"></i> 1.0x</span>
+                <button class="zoom-in" id="zoomInBtn"><i class="fas fa-search-plus"></i> +</button>
+                <button class="flashlight-btn" id="flashlightBtn"><i class="fas fa-lightbulb"></i> Lampu</button>
             </div>
+
+            <div class="scanner-status" id="scannerStatus">
+                <i class="fas fa-camera"></i> Arahkan ke barcode (pakai zoom jika perlu)
+            </div>
+
             <div class="manual-input-row">
                 <input type="text" id="manualBarcode" placeholder="Atau ketik EAN manual...">
                 <button id="manualBarcodeBtn"><i class="fas fa-arrow-right"></i> Cari</button>
@@ -828,6 +906,9 @@
             let html5QrCode = null;
             let isScannerOpen = false;
             let currentSearchKeyword = '';
+            let scanTimeout = null;
+            let currentZoom = 1.0;
+            let isFlashlightOn = false;
 
             // ===== DOM ELEMENTS =====
             const loadingEl = document.getElementById('loadingIndicator');
@@ -848,6 +929,11 @@
             const fileInput = document.getElementById('fileInput');
             const fileStatus = document.getElementById('fileStatus');
             const loadOnlineBtn = document.getElementById('loadOnlineBtn');
+            const scannerStatus = document.getElementById('scannerStatus');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
+            const flashlightBtn = document.getElementById('flashlightBtn');
 
             // ===== PROSES DATA EXCEL =====
             function processExcelData(jsonData) {
@@ -933,7 +1019,6 @@
                         tr.style.borderLeft = '4px solid #27ae60';
                     }
 
-                    // SOH status color
                     let sohClass = 'soh-high';
                     if (item.soh <= 0) sohClass = 'soh-low';
                     else if (item.soh < 10) sohClass = 'soh-medium';
@@ -1036,14 +1121,17 @@
                 renderPage(1, highlightEAN);
             }
 
-            // ===== SCAN BARCODE =====
+            // ===== SCAN BARCODE DENGAN ZOOM =====
             function startScanner() {
                 if (isScannerOpen) return;
                 isScannerOpen = true;
                 scannerOverlay.classList.add('active');
+                scannerStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengakses kamera...';
+                currentZoom = 1.0;
+                updateZoomDisplay();
 
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert('Perangkat tidak mendukung akses kamera. Silakan input EAN manual.');
+                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Perangkat tidak mendukung kamera. Silakan input manual.';
                     return;
                 }
 
@@ -1051,43 +1139,164 @@
                 readerElement.innerHTML = '';
 
                 try {
-                    html5QrCode = new Html5Qrcode("reader");
-
                     const config = {
-                        fps: 15,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0
+                        fps: 20,
+                        qrbox: { width: 320, height: 240 },
+                        aspectRatio: 1.0,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.CODE_93,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.QR_CODE,
+                            Html5QrcodeSupportedFormats.DATA_MATRIX,
+                            Html5QrcodeSupportedFormats.ITF,
+                            Html5QrcodeSupportedFormats.CODABAR
+                        ],
+                        rememberLastUsedCamera: true,
+                        supportedScanTypes: [
+                            Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                            Html5QrcodeScanType.SCAN_TYPE_FILE
+                        ]
                     };
+
+                    html5QrCode = new Html5Qrcode("reader");
 
                     html5QrCode.start({ facingMode: "environment" },
                         config,
                         onScanSuccess,
                         onScanError
-                    );
+                    ).then(() => {
+                        scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Arahkan ke barcode (pakai zoom jika perlu)';
+                    }).catch((err) => {
+                        console.error('Error starting scanner:', err);
+                        scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Gagal akses kamera: ' + err.message;
+                        setTimeout(() => {
+                            try {
+                                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanError);
+                                scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Menggunakan kamera depan';
+                            } catch (e2) {
+                                scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal akses kamera. Silakan input manual.';
+                            }
+                        }, 1000);
+                    });
                 } catch (err) {
                     console.error('Gagal start scanner:', err);
-                    alert('Gagal mengakses kamera. Silakan input EAN manual.');
-                    closeScannerModal();
+                    scannerStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Error: ' + err.message;
                 }
             }
 
+            // ===== FUNGSI ZOOM =====
+            function updateZoomDisplay() {
+                zoomLevelDisplay.innerHTML = `<i class="fas fa-search"></i> ${currentZoom.toFixed(1)}x`;
+            }
+
+            function applyZoom() {
+                if (!html5QrCode) return;
+                try {
+                    // html5-qrcode tidak punya API zoom langsung, 
+                    // tapi kita bisa memberitahu user untuk menggunakan pinch zoom
+                    // Atau kita bisa menggunakan CSS transform pada video
+                    const videoElement = document.querySelector('#reader video');
+                    if (videoElement) {
+                        videoElement.style.transform = `scale(${currentZoom})`;
+                        videoElement.style.transformOrigin = 'center center';
+                    }
+                    updateZoomDisplay();
+                } catch (e) {
+                    console.warn('Zoom not supported:', e);
+                }
+            }
+
+            function zoomIn() {
+                if (currentZoom < 3.0) {
+                    currentZoom = Math.min(3.0, currentZoom + 0.2);
+                    applyZoom();
+                    scannerStatus.innerHTML = '<i class="fas fa-search-plus"></i> Zoom: ' + currentZoom.toFixed(1) + 'x (gunakan untuk barcode kecil)';
+                }
+            }
+
+            function zoomOut() {
+                if (currentZoom > 0.5) {
+                    currentZoom = Math.max(0.5, currentZoom - 0.2);
+                    applyZoom();
+                    scannerStatus.innerHTML = '<i class="fas fa-search-minus"></i> Zoom: ' + currentZoom.toFixed(1) + 'x';
+                }
+            }
+
+            function resetZoom() {
+                currentZoom = 1.0;
+                applyZoom();
+                scannerStatus.innerHTML = '<i class="fas fa-camera"></i> Zoom reset ke 1.0x';
+            }
+
+            // ===== FUNGSI FLASHLIGHT =====
+            function toggleFlashlight() {
+                if (!html5QrCode) return;
+                try {
+                    isFlashlightOn = !isFlashlightOn;
+                    // Coba gunakan flashlight API jika tersedia
+                    const track = html5QrCode.getCameraStream()?.getVideoTracks?.[0];
+                    if (track && track.applyConstraints) {
+                        track.applyConstraints({
+                            advanced: [{ torch: isFlashlightOn }]
+                        }).then(() => {
+                            flashlightBtn.classList.toggle('active', isFlashlightOn);
+                            flashlightBtn.innerHTML = isFlashlightOn ? 
+                                '<i class="fas fa-lightbulb"></i> Lampu ON' : 
+                                '<i class="fas fa-lightbulb"></i> Lampu';
+                            scannerStatus.innerHTML = isFlashlightOn ? 
+                                '<i class="fas fa-lightbulb" style="color:#f39c12;"></i> Lampu menyala' : 
+                                '<i class="fas fa-camera"></i> Lampu mati';
+                        }).catch(() => {
+                            // Fallback: beri tahu user
+                            scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak didukung perangkat ini';
+                            isFlashlightOn = false;
+                        });
+                    } else {
+                        scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak tersedia';
+                        isFlashlightOn = false;
+                    }
+                } catch (e) {
+                    console.warn('Flashlight error:', e);
+                    scannerStatus.innerHTML = '<i class="fas fa-info-circle"></i> Flashlight tidak tersedia';
+                    isFlashlightOn = false;
+                }
+            }
+
+            // ===== SCAN SUCCESS =====
             function onScanSuccess(decodedText, decodedResult) {
                 if (html5QrCode) {
                     html5QrCode.stop().then(() => {
                         html5QrCode.clear();
                     }).catch(err => console.warn('Stop scanner error:', err));
                 }
+                
+                if (scanTimeout) clearTimeout(scanTimeout);
                 closeScannerModal();
 
-                const ean = decodedText.trim();
+                let ean = decodedText.trim();
+                ean = ean.replace(/[^0-9]/g, '');
+                
+                if (!ean) {
+                    showToast('Barcode tidak terbaca, silakan coba lagi', 'error');
+                    return;
+                }
+                
                 searchByEAN(ean);
             }
 
-            function onScanError(err) {}
+            function onScanError(err) {
+                // Normal scanning error - ignore
+            }
 
+            // ===== SEARCH BY EAN =====
             function searchByEAN(ean) {
                 if (!ean) {
-                    alert('EAN kosong!');
+                    showToast('EAN kosong!', 'error');
                     return;
                 }
 
@@ -1096,7 +1305,7 @@
                     filteredStocks = found;
                     updateTotalBadge();
                     renderPage(1, ean);
-                    showToast(`Ditemukan ${found.length} item untuk EAN: ${ean}`);
+                    showToast(`✅ Ditemukan ${found.length} item untuk EAN: ${ean}`);
                 } else {
                     const partial = allStocks.filter(item =>
                         item.ean.toLowerCase().includes(ean.toLowerCase())
@@ -1105,9 +1314,9 @@
                         filteredStocks = partial;
                         updateTotalBadge();
                         renderPage(1);
-                        showToast(`Ditemukan ${partial.length} item dengan EAN mengandung: ${ean}`);
+                        showToast(`🔍 Ditemukan ${partial.length} item dengan EAN mengandung: ${ean}`);
                     } else {
-                        showToast(`Tidak ditemukan item untuk EAN: ${ean}`, 'error');
+                        showToast(`❌ Tidak ditemukan item untuk EAN: ${ean}`, 'error');
                         applyFilters('', '');
                     }
                 }
@@ -1115,7 +1324,26 @@
                 clearBtn.classList.add('show');
             }
 
+            // ===== CLOSE SCANNER =====
             function closeScannerModal() {
+                if (scanTimeout) {
+                    clearTimeout(scanTimeout);
+                    scanTimeout = null;
+                }
+                
+                // Matikan flashlight
+                if (isFlashlightOn) {
+                    try {
+                        const track = html5QrCode?.getCameraStream()?.getVideoTracks?.[0];
+                        if (track) {
+                            track.applyConstraints({ advanced: [{ torch: false }] });
+                        }
+                    } catch (e) {}
+                    isFlashlightOn = false;
+                    flashlightBtn.classList.remove('active');
+                    flashlightBtn.innerHTML = '<i class="fas fa-lightbulb"></i> Lampu';
+                }
+
                 if (html5QrCode) {
                     try {
                         html5QrCode.stop().then(() => {
@@ -1127,11 +1355,19 @@
                 isScannerOpen = false;
                 scannerOverlay.classList.remove('active');
                 document.getElementById('reader').innerHTML = '';
+                
+                // Reset zoom
+                currentZoom = 1.0;
+                updateZoomDisplay();
             }
 
             // ===== TOAST =====
             function showToast(message, type = 'success') {
+                const oldToast = document.querySelector('.custom-toast');
+                if (oldToast) oldToast.remove();
+
                 const toast = document.createElement('div');
+                toast.className = 'custom-toast';
                 toast.style.cssText = `
                     position: fixed;
                     bottom: 2rem;
@@ -1156,7 +1392,7 @@
                     toast.style.opacity = '0';
                     toast.style.transition = 'opacity 0.4s';
                     setTimeout(() => toast.remove(), 400);
-                }, 3000);
+                }, 3500);
             }
 
             // ===== HELPER =====
@@ -1178,7 +1414,7 @@
                 totalBadge.innerHTML = `<i class="fas fa-database"></i> ${total} item`;
             }
 
-            // ===== NAVIGASI GLOBAL =====
+            // ===== NAVIGASI =====
             window.goToPage = function(page) {
                 if (page < 1 || page > totalPages || page === currentPage) return;
                 renderPage(page);
@@ -1211,13 +1447,13 @@
                     }
 
                     loadData(processedData, 'Data dari GitHub (stock.xlsx)');
-                    showToast(`Berhasil memuat ${processedData.length} item stock`);
+                    showToast(`✅ Berhasil memuat ${processedData.length} item stock`);
 
                 } catch (error) {
                     console.error('Error loading from GitHub:', error);
                     loadingEl.style.display = 'none';
                     fileStatus.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal muat dari GitHub: ${error.message}`;
-                    showToast('Gagal memuat data: ' + error.message, 'error');
+                    showToast('❌ Gagal memuat data: ' + error.message, 'error');
 
                     emptyState.style.display = 'block';
                     emptyState.innerHTML = `
@@ -1238,20 +1474,16 @@
             }
 
             // ===== EVENT LISTENERS =====
-            // Load from GitHub
             loadOnlineBtn.addEventListener('click', loadFromGitHub);
 
-            // Search
             searchBtn.addEventListener('click', function() {
-                const keyword = searchInput.value;
-                applyFilters(keyword);
+                applyFilters(searchInput.value);
             });
 
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    const keyword = searchInput.value;
-                    applyFilters(keyword);
+                    applyFilters(this.value);
                 }
                 if (this.value.length > 0) {
                     clearBtn.classList.add('show');
@@ -1276,18 +1508,39 @@
                 searchInput.focus();
             });
 
-            // Scan
-            scanBtn.addEventListener('click', function() {
-                startScanner();
-            });
+            scanBtn.addEventListener('click', startScanner);
 
-            closeScanner.addEventListener('click', function() {
-                closeScannerModal();
-            });
+            // ===== ZOOM EVENTS =====
+            zoomInBtn.addEventListener('click', zoomIn);
+            zoomOutBtn.addEventListener('click', zoomOut);
+            
+            // Double click untuk reset zoom
+            document.getElementById('reader').addEventListener('dblclick', resetZoom);
+
+            // ===== FLASHLIGHT =====
+            flashlightBtn.addEventListener('click', toggleFlashlight);
+
+            closeScanner.addEventListener('click', closeScannerModal);
 
             scannerOverlay.addEventListener('click', function(e) {
                 if (e.target === scannerOverlay) {
                     closeScannerModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isScannerOpen) {
+                    closeScannerModal();
+                }
+                // Keyboard shortcut: +/- untuk zoom
+                if (isScannerOpen) {
+                    if (e.key === '+' || e.key === '=') {
+                        e.preventDefault();
+                        zoomIn();
+                    } else if (e.key === '-') {
+                        e.preventDefault();
+                        zoomOut();
+                    }
                 }
             });
 
@@ -1297,7 +1550,7 @@
                     closeScannerModal();
                     searchByEAN(ean);
                 } else {
-                    alert('Masukkan EAN!');
+                    showToast('Masukkan EAN terlebih dahulu!', 'error');
                 }
             });
 
@@ -1312,7 +1565,6 @@
                 }
             });
 
-            // Upload File
             fileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1332,7 +1584,7 @@
                         }
 
                         loadData(processedData, `File: ${file.name}`);
-                        showToast(`Berhasil memuat ${processedData.length} item dari ${file.name}`);
+                        showToast(`✅ Berhasil memuat ${processedData.length} item dari ${file.name}`);
                     } catch (error) {
                         console.error('Error reading file:', error);
                         showToast('Gagal membaca file: ' + error.message, 'error');
@@ -1346,7 +1598,6 @@
             loadingText.textContent = 'Klik "Muat dari GitHub" atau upload file Excel';
             fileStatus.innerHTML = `<i class="fas fa-info-circle"></i> Klik "Muat dari GitHub" atau upload file`;
 
-            // Cleanup
             window.addEventListener('beforeunload', function() {
                 if (html5QrCode) {
                     try {
@@ -1355,6 +1606,7 @@
                         }).catch(() => {});
                     } catch (e) {}
                 }
+                if (scanTimeout) clearTimeout(scanTimeout);
             });
 
         })();
