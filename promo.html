@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- SheetJS untuk baca Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- html5-qrcode untuk scan barcode -->
+    <!-- html5-qrcode untuk scan barcode versi terbaru -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         * {
@@ -373,9 +373,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -392,7 +392,7 @@
             max-width: 500px;
             width: 100%;
             padding: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             position: relative;
             animation: fadeIn 0.25s ease;
         }
@@ -452,10 +452,30 @@
             border-radius: 1rem;
             overflow: hidden;
             background: #1a1a2e;
+            position: relative;
         }
 
         #reader video {
             border-radius: 1rem;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #reader .scan-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: #27ae60;
+            animation: scanMove 1.5s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+        }
+
+        @keyframes scanMove {
+            0%, 100% { top: 20%; }
+            50% { top: 80%; }
         }
 
         .scanner-status {
@@ -468,6 +488,66 @@
         .scanner-status i {
             color: #27ae60;
             margin-right: 0.3rem;
+        }
+
+        .scanner-status .status-detail {
+            display: block;
+            font-size: 0.75rem;
+            color: #8aaec4;
+            margin-top: 0.2rem;
+        }
+
+        .scanner-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .scanner-controls button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        .scanner-controls button:active {
+            transform: scale(0.95);
+        }
+
+        .scanner-controls .flash-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .scanner-controls .flash-btn.active {
+            background: #e67e22;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .scanner-controls .torch-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .scanner-controls .torch-btn.active {
+            background: #2980b9;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .scanner-controls .switch-cam-btn {
+            background: #9b59b6;
+            color: white;
         }
 
         .manual-input-row {
@@ -521,12 +601,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .promo-grid {
@@ -748,6 +824,30 @@
             color: #2a7faa;
         }
 
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.8rem 1.5rem;
+            border-radius: 1.2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            z-index: 2000;
+            max-width: 90%;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: opacity 0.4s;
+        }
+
+        .toast-success { background: #27ae60; }
+        .toast-error { background: #e74c3c; }
+        .toast-info { background: #3498db; }
+
         @media (max-width: 768px) {
             .header {
                 padding: 1rem 1.2rem;
@@ -816,6 +916,12 @@
             .promo-card .promo-dates {
                 flex-direction: column;
                 gap: 0.3rem;
+            }
+
+            .scanner-controls button {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.6rem;
+                min-width: 60px;
             }
         }
 
@@ -965,15 +1071,33 @@
         </div>
     </div>
 
+    <!-- Scanner Overlay -->
     <div class="scanner-overlay" id="scannerOverlay">
         <div class="scanner-box">
             <div class="scanner-header">
                 <h3><i class="fas fa-qrcode"></i> Scan Barcode</h3>
                 <button class="close-scanner" id="closeScanner"><i class="fas fa-times"></i></button>
             </div>
-            <div id="reader"></div>
+            <div id="reader">
+                <div class="scan-line"></div>
+            </div>
             <div class="scanner-status">
-                <i class="fas fa-camera"></i> Arahkan kamera ke barcode
+                <i class="fas fa-camera"></i> 
+                <span id="scannerStatusText">Arahkan kamera ke barcode</span>
+                <span class="status-detail">
+                    <i class="fas fa-lightbulb"></i> Tips: Jarak 10-20cm, pencahayaan cukup
+                </span>
+            </div>
+            <div class="scanner-controls">
+                <button class="flash-btn" id="flashBtn">
+                    <i class="fas fa-bolt"></i> Flash
+                </button>
+                <button class="torch-btn" id="torchBtn">
+                    <i class="fas fa-lightbulb"></i> Lampu
+                </button>
+                <button class="switch-cam-btn" id="switchCamBtn">
+                    <i class="fas fa-sync-alt"></i> Ganti
+                </button>
             </div>
             <div class="manual-input-row">
                 <input type="text" id="manualBarcode" placeholder="Atau ketik kode barcode manual...">
@@ -994,6 +1118,10 @@
             let isLoading = false;
             let html5QrCode = null;
             let isScannerOpen = false;
+            let isFlashOn = false;
+            let isTorchOn = false;
+            let currentCameraId = 'environment';
+            let cameraList = [];
 
             const loadingEl = document.getElementById('loadingIndicator');
             const loadingText = document.getElementById('loadingText');
@@ -1016,7 +1144,12 @@
             const fileInput = document.getElementById('fileInput');
             const fileStatus = document.getElementById('fileStatus');
             const loadOnlineBtn = document.getElementById('loadOnlineBtn');
+            const scannerStatusText = document.getElementById('scannerStatusText');
+            const flashBtn = document.getElementById('flashBtn');
+            const torchBtn = document.getElementById('torchBtn');
+            const switchCamBtn = document.getElementById('switchCamBtn');
 
+            // ==================== DATA PROCESSING ====================
             function processExcelData(jsonData) {
                 if (!jsonData || jsonData.length === 0) {
                     throw new Error('Data kosong atau format tidak sesuai');
@@ -1032,7 +1165,7 @@
                 };
 
                 const nameKey = mapKey(['nama', 'produk', 'item', 'promo', 'title', 'description', 'desc', 'plu']);
-                const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode']);
+                const codeKey = mapKey(['kode', 'code', 'plu', 'id', 'barcode', 'barcode1']);
                 const categoryKey = mapKey(['kategori', 'category', 'jenis']);
                 const priceKey = mapKey(['harga', 'price', 'harga_normal', 'normal', 'current_price', 'current price']);
                 const discountKey = mapKey(['diskon', 'discount', 'harga_diskon', 'promo_price', 'promo']);
@@ -1157,6 +1290,7 @@
                 }
             }
 
+            // ==================== RENDER FUNCTIONS ====================
             function renderPage(page, highlightKode = null) {
                 if (isLoading) return;
 
@@ -1366,6 +1500,19 @@
                 renderPage(1, highlightKode);
             }
 
+            // ==================== SCANNER FUNCTIONS ====================
+            async function getAvailableCameras() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    cameraList = videoDevices;
+                    return videoDevices;
+                } catch (err) {
+                    console.warn('Gagal mendapatkan daftar kamera:', err);
+                    return [];
+                }
+            }
+
             function startScanner() {
                 if (isScannerOpen) return;
                 isScannerOpen = true;
@@ -1377,30 +1524,58 @@
                 }
 
                 const readerElement = document.getElementById('reader');
-                readerElement.innerHTML = '';
+                readerElement.innerHTML = '<div class="scan-line"></div>';
 
                 try {
                     html5QrCode = new Html5Qrcode("reader");
 
                     const config = {
-                        fps: 15,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0
+                        fps: 30,
+                        qrbox: { width: 280, height: 200 },
+                        aspectRatio: 1.0,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.CODE_93,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.QR_CODE,
+                            Html5QrcodeSupportedFormats.DATA_MATRIX,
+                            Html5QrcodeSupportedFormats.PDF_417,
+                            Html5QrcodeSupportedFormats.AZTEC
+                        ]
                     };
 
-                    html5QrCode.start({ facingMode: "environment" },
+                    scannerStatusText.textContent = 'Mengakses kamera...';
+
+                    html5QrCode.start(
+                        { facingMode: currentCameraId },
                         config,
                         onScanSuccess,
                         onScanError
-                    );
+                    ).then(() => {
+                        scannerStatusText.textContent = 'Arahkan kamera ke barcode';
+                        getAvailableCameras();
+                    }).catch((err) => {
+                        console.error('Gagal start scanner:', err);
+                        scannerStatusText.textContent = '⚠️ Gagal akses kamera: ' + err.message;
+                        showToast('Gagal mengakses kamera. Coba input manual.', 'error');
+                    });
                 } catch (err) {
-                    console.error('Gagal start scanner:', err);
+                    console.error('Gagal inisialisasi scanner:', err);
                     alert('Gagal mengakses kamera. Silakan input kode manual.');
                     closeScannerModal();
                 }
             }
 
             function onScanSuccess(decodedText, decodedResult) {
+                // Beri feedback getar jika support
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+
                 if (html5QrCode) {
                     html5QrCode.stop().then(() => {
                         html5QrCode.clear();
@@ -1412,11 +1587,16 @@
                 searchByBarcode(kode);
             }
 
-            function onScanError(err) {}
+            function onScanError(err) {
+                // Error scanning - ignore, terus scan
+                if (err && err.message) {
+                    console.debug('Scan error:', err.message);
+                }
+            }
 
             function searchByBarcode(kode) {
                 if (!kode) {
-                    alert('Kode barcode kosong!');
+                    showToast('Kode barcode kosong!', 'error');
                     return;
                 }
 
@@ -1425,7 +1605,7 @@
                     filteredPromos = found;
                     updateTotalBadge();
                     renderPage(1, kode);
-                    showToast(`Ditemukan ${found.length} promo untuk kode: ${kode}`);
+                    showToast(`✅ Ditemukan ${found.length} promo untuk kode: ${kode}`, 'success');
                 } else {
                     const partial = allPromos.filter(item =>
                         item.kode.toLowerCase().includes(kode.toLowerCase())
@@ -1434,9 +1614,9 @@
                         filteredPromos = partial;
                         updateTotalBadge();
                         renderPage(1);
-                        showToast(`Ditemukan ${partial.length} promo dengan kode mengandung: ${kode}`);
+                        showToast(`🔍 Ditemukan ${partial.length} promo dengan kode mengandung: ${kode}`, 'info');
                     } else {
-                        showToast(`Tidak ditemukan promo untuk kode: ${kode}`, 'error');
+                        showToast(`❌ Tidak ditemukan promo untuk kode: ${kode}`, 'error');
                         applyFilters('', '', '');
                     }
                 }
@@ -1454,35 +1634,123 @@
                     html5QrCode = null;
                 }
                 isScannerOpen = false;
+                isFlashOn = false;
+                isTorchOn = false;
+                flashBtn.classList.remove('active');
+                torchBtn.classList.remove('active');
                 scannerOverlay.classList.remove('active');
                 document.getElementById('reader').innerHTML = '';
             }
 
+            async function toggleFlash() {
+                if (!html5QrCode) return;
+                try {
+                    isFlashOn = !isFlashOn;
+                    await html5QrCode.applyVideoConstraints({
+                        advanced: [{ torch: isFlashOn }]
+                    });
+                    flashBtn.classList.toggle('active', isFlashOn);
+                    flashBtn.innerHTML = isFlashOn ? 
+                        '<i class="fas fa-bolt"></i> Flash ON' : 
+                        '<i class="fas fa-bolt"></i> Flash';
+                } catch (err) {
+                    console.warn('Toggle flash error:', err);
+                    showToast('Fitur flash tidak tersedia', 'error');
+                    flashBtn.classList.remove('active');
+                    isFlashOn = false;
+                }
+            }
+
+            async function toggleTorch() {
+                if (!html5QrCode) return;
+                try {
+                    isTorchOn = !isTorchOn;
+                    await html5QrCode.applyVideoConstraints({
+                        advanced: [{ torch: isTorchOn }]
+                    });
+                    torchBtn.classList.toggle('active', isTorchOn);
+                    torchBtn.innerHTML = isTorchOn ? 
+                        '<i class="fas fa-lightbulb"></i> Lampu ON' : 
+                        '<i class="fas fa-lightbulb"></i> Lampu';
+                } catch (err) {
+                    console.warn('Toggle torch error:', err);
+                    showToast('Fitur lampu tidak tersedia', 'error');
+                    torchBtn.classList.remove('active');
+                    isTorchOn = false;
+                }
+            }
+
+            async function switchCamera() {
+                if (!html5QrCode) return;
+                
+                try {
+                    const cameras = await getAvailableCameras();
+                    if (cameras.length <= 1) {
+                        showToast('Hanya ada 1 kamera tersedia', 'info');
+                        return;
+                    }
+
+                    // Cari kamera selanjutnya
+                    const currentIndex = cameras.findIndex(c => 
+                        c.deviceId === currentCameraId || 
+                        (currentCameraId === 'environment' && c.facingMode === 'environment')
+                    );
+                    
+                    const nextIndex = (currentIndex + 1) % cameras.length;
+                    const nextCamera = cameras[nextIndex];
+                    
+                    // Restart scanner dengan kamera baru
+                    if (html5QrCode) {
+                        await html5QrCode.stop().catch(() => {});
+                        html5QrCode.clear().catch(() => {});
+                    }
+                    
+                    currentCameraId = nextCamera.deviceId;
+                    scannerStatusText.textContent = 'Mengganti kamera...';
+                    
+                    // Start ulang
+                    const config = {
+                        fps: 30,
+                        qrbox: { width: 280, height: 200 },
+                        aspectRatio: 1.0,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.CODE_93,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.QR_CODE
+                        ]
+                    };
+
+                    html5QrCode = new Html5Qrcode("reader");
+                    await html5QrCode.start(
+                        { deviceId: { exact: currentCameraId } },
+                        config,
+                        onScanSuccess,
+                        onScanError
+                    );
+                    
+                    scannerStatusText.textContent = 'Arahkan kamera ke barcode';
+                    showToast('Berhasil ganti kamera', 'success');
+                } catch (err) {
+                    console.error('Switch camera error:', err);
+                    showToast('Gagal mengganti kamera', 'error');
+                }
+            }
+
+            // ==================== UI HELPERS ====================
             function showToast(message, type = 'success') {
                 const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    bottom: 2rem;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: ${type === 'error' ? '#e74c3c' : '#27ae60'};
-                    color: white;
-                    padding: 0.8rem 1.5rem;
-                    border-radius: 1.2rem;
-                    font-weight: 600;
-                    font-size: 0.9rem;
-                    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-                    z-index: 2000;
-                    max-width: 90%;
-                    text-align: center;
-                    animation: fadeIn 0.3s ease;
-                    border: 1px solid rgba(255,255,255,0.2);
-                `;
-                toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+                const typeClass = type === 'error' ? 'toast-error' : type === 'info' ? 'toast-info' : 'toast-success';
+                toast.className = `toast ${typeClass}`;
+                const icon = type === 'error' ? 'fa-exclamation-circle' : type === 'info' ? 'fa-info-circle' : 'fa-check-circle';
+                toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
                 document.body.appendChild(toast);
                 setTimeout(() => {
                     toast.style.opacity = '0';
-                    toast.style.transition = 'opacity 0.4s';
                     setTimeout(() => toast.remove(), 400);
                 }, 3000);
             }
@@ -1508,6 +1776,7 @@
                 renderPage(page);
             };
 
+            // ==================== LOAD DATA ====================
             async function loadFromGitHub() {
                 try {
                     isLoading = true;
@@ -1534,7 +1803,7 @@
                     }
 
                     loadData(processedData, 'Data dari GitHub (promo.xlsx)');
-                    showToast(`Berhasil memuat ${processedData.length} data dari GitHub`);
+                    showToast(`Berhasil memuat ${processedData.length} data dari GitHub`, 'success');
 
                 } catch (error) {
                     console.error('Error loading from GitHub:', error);
@@ -1560,6 +1829,7 @@
                 }
             }
 
+            // ==================== EVENT LISTENERS ====================
             loadOnlineBtn.addEventListener('click', loadFromGitHub);
 
             searchBtn.addEventListener('click', function() {
@@ -1617,7 +1887,7 @@
                 endDateFilter.value = '';
                 clearBtn.classList.remove('show');
                 applyFilters('', '', '');
-                showToast('Filter tanggal direset');
+                showToast('Filter tanggal direset', 'info');
             });
 
             scanBtn.addEventListener('click', function() {
@@ -1640,7 +1910,7 @@
                     closeScannerModal();
                     searchByBarcode(kode);
                 } else {
-                    alert('Masukkan kode barcode!');
+                    showToast('Masukkan kode barcode!', 'error');
                 }
             });
 
@@ -1674,7 +1944,7 @@
                         }
                         
                         loadData(processedData, `File: ${file.name}`);
-                        showToast(`Berhasil memuat ${processedData.length} data dari ${file.name}`);
+                        showToast(`Berhasil memuat ${processedData.length} data dari ${file.name}`, 'success');
                     } catch (error) {
                         console.error('Error reading file:', error);
                         showToast('Gagal membaca file: ' + error.message, 'error');
@@ -1683,9 +1953,22 @@
                 reader.readAsArrayBuffer(file);
             });
 
+            // Scanner control buttons
+            flashBtn.addEventListener('click', toggleFlash);
+            torchBtn.addEventListener('click', toggleTorch);
+            switchCamBtn.addEventListener('click', switchCamera);
+
+            // ==================== INIT ====================
             loadingEl.style.display = 'block';
             loadingText.textContent = 'Klik "Muat dari GitHub" atau upload file Excel';
             fileStatus.innerHTML = `<i class="fas fa-info-circle"></i> Klik "Muat dari GitHub" atau upload file`;
+
+            // Ambil daftar kamera saat halaman dimuat
+            getAvailableCameras().then(cameras => {
+                if (cameras.length > 0) {
+                    console.log(`${cameras.length} kamera tersedia`);
+                }
+            }).catch(() => {});
 
             window.addEventListener('beforeunload', function() {
                 if (html5QrCode) {
